@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>القائمة</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #faf7f2;
+    --surface: #fff;
+    --dark: #1a1209;
+    --gold: #b8913a;
+    --gold2: #d4ac5a;
+    --border: #e8e0d0;
+    --muted: #9a8f7e;
+    --cat-bg: #f5f0e8;
+    --radius: 14px;
+    --shadow: 0 4px 24px rgba(0,0,0,.08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Tajawal', sans-serif;
+    background: var(--bg);
+    color: var(--dark);
+    direction: rtl;
+    min-height: 100vh;
+  }
+
+  /* ── Loading/Error ─────── */
+  #splash {
+    position: fixed; inset: 0;
+    background: var(--dark);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+    transition: opacity .5s;
+  }
+  #splash.hidden { opacity: 0; pointer-events: none; }
+  .spinner {
+    width: 48px; height: 48px;
+    border: 3px solid rgba(184,145,58,.3);
+    border-top-color: var(--gold2);
+    border-radius: 50%;
+    animation: spin .8s linear infinite;
+    margin-bottom: 18px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  #splash p { color: rgba(255,255,255,.6); font-size: 15px; }
+  #errorMsg {
+    display: none;
+    position: fixed; inset: 0;
+    background: var(--bg);
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+    padding: 32px;
+    z-index: 99;
+  }
+  #errorMsg.show { display: flex; }
+  #errorMsg h2 { font-size: 22px; color: var(--gold); margin-bottom: 10px; }
+  #errorMsg p { color: var(--muted); font-size: 15px; }
+
+  /* ── Header ─────── */
+  #siteHeader {
+    background: var(--dark);
+    padding: 28px 20px 20px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  #siteHeader::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(184,145,58,.25), transparent 70%);
+  }
+  #shopName {
+    font-family: 'Tajawal', sans-serif;
+    font-size: 30px;
+    font-weight: 900;
+    color: #fff;
+    position: relative;
+    letter-spacing: 1px;
+  }
+  #shopDesc {
+    font-size: 14px;
+    color: rgba(255,255,255,.5);
+    margin-top: 5px;
+    position: relative;
+  }
+  .gold-line {
+    width: 60px; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold2), transparent);
+    margin: 14px auto 0;
+    position: relative;
+  }
+
+  /* ── Category Nav ─────── */
+  #catNav {
+    position: sticky;
+    top: 0;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    z-index: 10;
+    padding: 0;
+    overflow-x: auto;
+    white-space: nowrap;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  #catNav::-webkit-scrollbar { display: none; }
+  .cat-tab {
+    display: inline-block;
+    padding: 13px 18px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all .2s;
+    white-space: nowrap;
+  }
+  .cat-tab.active {
+    color: var(--gold);
+    border-bottom-color: var(--gold);
+  }
+
+  /* ── Content ─────── */
+  #content { padding: 20px 16px 60px; max-width: 700px; margin: auto; }
+
+  .cat-section { margin-bottom: 36px; }
+  .cat-section-title {
+    font-size: 18px;
+    font-weight: 900;
+    color: var(--dark);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .cat-section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .item-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+    transition: box-shadow .2s;
+    animation: fadeUp .35s ease both;
+  }
+  .item-card:hover { box-shadow: var(--shadow); }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .item-info { flex: 1; }
+  .item-name {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--dark);
+    margin-bottom: 4px;
+  }
+  .item-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .item-price {
+    text-align: left;
+    min-width: 80px;
+    flex-shrink: 0;
+  }
+  .price-usd {
+    font-size: 17px;
+    font-weight: 900;
+    color: var(--gold);
+    direction: ltr;
+    display: block;
+  }
+  .price-lbp {
+    font-size: 12px;
+    color: var(--muted);
+    direction: ltr;
+    display: block;
+    margin-top: 2px;
+  }
+  .unavailable {
+    opacity: .4;
+    position: relative;
+  }
+  .unavailable::after {
+    content: 'غير متوفر';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    background: rgba(0,0,0,.6);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 20px;
+  }
+
+  /* ── Footer ─────── */
+  footer {
+    text-align: center;
+    padding: 20px;
+    font-size: 12px;
+    color: var(--muted);
+    border-top: 1px solid var(--border);
+  }
+  #lastSync { color: var(--gold); font-size: 12px; text-align: center; padding: 8px; }
+</style>
+</head>
+<body>
+
+<div id="splash">
+  <div class="spinner"></div>
+  <p>جاري تحميل القائمة...</p>
+</div>
+
+<div id="errorMsg">
+  <h2>⚠️ تعذّر تحميل القائمة</h2>
+  <p id="errorText">المتجر غير موجود أو القائمة غير متاحة.</p>
+</div>
+
+<div id="app" style="display:none">
+  <div id="siteHeader">
+    <div id="shopName">...</div>
+    <div id="shopDesc"></div>
+    <div class="gold-line"></div>
+  </div>
+
+  <nav id="catNav"></nav>
+  <div id="lastSync"></div>
+  <div id="content"></div>
+
+  <footer>
+    <span>Powered by Squares POS</span>
+  </footer>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-app.js";
+import { getFirestore, doc, getDoc, collection, getDocs, query, orderBy, onSnapshot }
+  from "https://www.gstatic.com/firebasejs/11.9.0/firebase-firestore.js";
+
+// ─── Your Firebase Project ─────────────────────────────────────────────────────
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyCyizOZNUcbczGjh1P0sxn85LoiLI9Q0yw",
+  authDomain: "sahashop-97ae5.firebaseapp.com",
+  databaseURL: "https://sahashop-97ae5-default-rtdb.firebaseio.com",
+  projectId: "sahashop-97ae5",
+  storageBucket: "sahashop-97ae5.firebasestorage.app",
+  messagingSenderId: "620364206298",
+  appId: "1:620364206298:web:bb9a99e5e60e4be3dad5e3"
+};
+// ────────────────────────────────────────────────────────────────────────────────
+
+const params = new URLSearchParams(location.search);
+const shopId = (params.get('shop') || '').replace(/['"]/g, '').trim();
+
+function showError(msg) {
+  document.getElementById('errorText').textContent = msg;
+  document.getElementById('errorMsg').classList.add('show');
+  document.getElementById('splash').classList.add('hidden');
+}
+
+if (!shopId) { showError('لم يُحدَّد معرّف المتجر. أضف ?shop=معرّف للرابط.'); }
+else {
+  const app = initializeApp(FIREBASE_CONFIG);
+  const db = getFirestore(app);
+
+  // Load shop info
+  let currency = 'both';
+  try {
+    const shopDoc = await getDoc(doc(db, "shops", shopId));
+    if (!shopDoc.exists()) return showError('المتجر غير موجود.');
+    const shop = shopDoc.data();
+    if (shop.status !== 'active') return showError('هذا المتجر غير متاح حالياً.');
+    currency = shop.currency || 'both';
+    document.getElementById('shopName').textContent = shop.name;
+    document.getElementById('shopDesc').textContent = shop.description || '';
+    document.title = shop.name + ' — القائمة';
+    if (shop.lastSync) {
+      const d = new Date(shop.lastSync);
+      document.getElementById('lastSync').textContent =
+        `آخر تحديث: ${d.toLocaleDateString('ar-LB')} ${d.toLocaleTimeString('ar-LB')}`;
+    }
+  } catch(e) {
+    return showError('خطأ في الاتصال: ' + e.message);
+  }
+
+  // Live listener for categories + items
+  const catsRef = query(collection(db, "shops", shopId, "categories"), orderBy("order"));
+  onSnapshot(catsRef, async (catSnap) => {
+    const itemsSnap = await getDocs(query(collection(db, "shops", shopId, "items"), orderBy("order")));
+    const items = {};
+    itemsSnap.forEach(d => {
+      const it = d.data();
+      if (!items[it.catId]) items[it.catId] = [];
+      items[it.catId].push(it);
+    });
+
+    const cats = [];
+    catSnap.forEach(d => cats.push(d.data()));
+
+    renderMenu(cats, items, currency);
+    document.getElementById('app').style.display = '';
+    document.getElementById('splash').classList.add('hidden');
+  });
+}
+
+function formatPrice(val, type) {
+  if (!val || val <= 0) return null;
+  if (type === 'usd') return '$' + parseFloat(val).toFixed(2);
+  if (type === 'lbp') return Number(val).toLocaleString('ar') + ' ل.ل';
+  return null;
+}
+
+function renderMenu(cats, items, currency) {
+  const nav = document.getElementById('catNav');
+  const content = document.getElementById('content');
+  nav.innerHTML = '';
+  content.innerHTML = '';
+
+  if (cats.length === 0) {
+    content.innerHTML = '<p style="text-align:center;color:var(--muted);margin-top:40px">القائمة فارغة حالياً.</p>';
+    return;
+  }
+
+  cats.forEach((cat, i) => {
+    // Nav tab
+    const tab = document.createElement('div');
+    tab.className = 'cat-tab' + (i === 0 ? ' active' : '');
+    tab.textContent = cat.name;
+    tab.onclick = () => {
+      document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('sec-' + cat.id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+    nav.appendChild(tab);
+
+    // Section
+    const sec = document.createElement('div');
+    sec.className = 'cat-section';
+    sec.id = 'sec-' + cat.id;
+    const catItems = items[cat.id] || [];
+
+    sec.innerHTML = `<div class="cat-section-title">${cat.name}</div>`;
+
+    if (catItems.length === 0) {
+      sec.innerHTML += `<p style="color:var(--muted);font-size:14px;padding:8px 0">لا توجد منتجات في هذا التصنيف.</p>`;
+    } else {
+      catItems.forEach((it, idx) => {
+        const card = document.createElement('div');
+        card.className = 'item-card' + (!it.available ? ' unavailable' : '');
+        card.style.animationDelay = (idx * 0.05) + 's';
+
+        let priceHtml = '';
+        const usdFmt = formatPrice(it.price, 'usd');
+        const lbpFmt = formatPrice(it.priceLbp, 'lbp');
+        if (currency === 'usd' && usdFmt) priceHtml = `<span class="price-usd">${usdFmt}</span>`;
+        else if (currency === 'lbp' && lbpFmt) priceHtml = `<span class="price-usd" style="font-size:15px">${lbpFmt}</span>`;
+        else {
+          if (usdFmt) priceHtml += `<span class="price-usd">${usdFmt}</span>`;
+          if (lbpFmt) priceHtml += `<span class="price-lbp">${lbpFmt}</span>`;
+        }
+
+        card.innerHTML = `
+          <div class="item-info">
+            <div class="item-name">${it.name}</div>
+            ${it.desc ? `<div class="item-desc">${it.desc}</div>` : ''}
+          </div>
+          <div class="item-price">${priceHtml}</div>
+        `;
+        sec.appendChild(card);
+      });
+    }
+    content.appendChild(sec);
+  });
+
+  // Scroll spy
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const id = e.target.id.replace('sec-', '');
+        document.querySelectorAll('.cat-tab').forEach((t, i) => {
+          t.classList.toggle('active', cats[i]?.id === id);
+        });
+      }
+    });
+  }, { threshold: 0.3 });
+  document.querySelectorAll('.cat-section').forEach(s => observer.observe(s));
+}
+</script>
+</body>
+</html>
