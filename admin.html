@@ -7,134 +7,81 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg:      #080810;
-    --surface: #10101e;
-    --card:    #16162a;
-    --border:  #252540;
-    --accent:  #c8a96e;
-    --accent2: #e8c98e;
-    --danger:  #e05555;
-    --success: #55c88a;
-    --text:    #f0ece0;
-    --muted:   #7a7a9a;
-    --radius:  12px;
+    --bg:#080810;--surface:#10101e;--card:#16162a;--border:#252540;
+    --accent:#c8a96e;--accent2:#e8c98e;--danger:#e05555;--success:#55c88a;
+    --text:#f0ece0;--muted:#7a7a9a;--radius:12px;
   }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
 
   /* LOGIN */
-  #loginScreen {
-    position: fixed; inset: 0;
-    background: var(--bg);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 100;
-  }
-  .login-box {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 48px 40px 40px;
-    width: 100%;
-    max-width: 400px;
-    box-shadow: 0 32px 80px rgba(0,0,0,.6);
-  }
-  .login-logo { text-align: center; margin-bottom: 32px; }
-  .login-logo .icon { font-size: 42px; display: block; margin-bottom: 10px; }
-  .login-logo h2 { font-size: 20px; font-weight: 700; color: var(--accent); }
-  .login-logo p  { font-size: 13px; color: var(--muted); margin-top: 4px; }
-  .login-field { margin-bottom: 16px; }
-  .login-field label { display: block; font-size: 11px; font-weight: 600; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 7px; }
-  .login-field input {
-    width: 100%; background: var(--surface); border: 1px solid var(--border);
-    border-radius: 9px; padding: 12px 16px; color: var(--text);
-    font-family: 'Inter', sans-serif; font-size: 15px; outline: none;
-    transition: border-color .2s, box-shadow .2s;
-  }
-  .login-field input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(200,169,110,.12); }
-  .login-btn {
-    width: 100%; padding: 13px; background: var(--accent); color: #080810;
-    border: none; border-radius: 9px; font-family: 'Inter', sans-serif;
-    font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 8px;
-    transition: background .2s, opacity .2s;
-  }
-  .login-btn:hover:not(:disabled) { background: var(--accent2); }
-  .login-btn:disabled { opacity: .6; cursor: not-allowed; }
-  .login-error {
-    margin-top: 14px; background: rgba(224,85,85,.12);
-    border: 1px solid rgba(224,85,85,.3); border-radius: 8px;
-    padding: 10px 14px; font-size: 13px; color: var(--danger);
-    display: none; text-align: center;
-  }
+  #loginScreen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:100;}
+  .login-box{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:48px 40px 40px;width:100%;max-width:400px;box-shadow:0 32px 80px rgba(0,0,0,.6);}
+  .login-logo{text-align:center;margin-bottom:32px;}
+  .login-logo .icon{font-size:42px;display:block;margin-bottom:10px;}
+  .login-logo h2{font-size:20px;font-weight:700;color:var(--accent);}
+  .login-logo p{font-size:13px;color:var(--muted);margin-top:4px;}
+  .login-field{margin-bottom:16px;}
+  .login-field label{display:block;font-size:11px;font-weight:600;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:7px;}
+  .login-field input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:12px 16px;color:var(--text);font-family:'Inter',sans-serif;font-size:15px;outline:none;transition:border-color .2s,box-shadow .2s;}
+  .login-field input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(200,169,110,.12);}
+  .login-btn{width:100%;padding:13px;background:var(--accent);color:#080810;border:none;border-radius:9px;font-family:'Inter',sans-serif;font-size:15px;font-weight:700;cursor:pointer;margin-top:8px;transition:background .2s,opacity .2s;}
+  .login-btn:hover:not(:disabled){background:var(--accent2);}
+  .login-btn:disabled{opacity:.6;cursor:not-allowed;}
+  .login-error{margin-top:14px;background:rgba(224,85,85,.12);border:1px solid rgba(224,85,85,.3);border-radius:8px;padding:10px 14px;font-size:13px;color:var(--danger);display:none;text-align:center;}
 
   /* DASHBOARD */
-  #dashboard { display: none; min-height: 100vh; }
-  header {
-    background: var(--surface); border-bottom: 1px solid var(--border);
-    padding: 16px 32px; display: flex; align-items: center;
-    justify-content: space-between; position: sticky; top: 0; z-index: 10;
-  }
-  header h1 { font-size: 18px; font-weight: 700; color: var(--accent); }
-  .header-right { display: flex; align-items: center; gap: 16px; }
-  .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--success); box-shadow: 0 0 6px var(--success); }
-  .admin-user { font-size: 13px; color: var(--muted); }
-  .logout-btn {
-    background: transparent; border: 1px solid var(--border); color: var(--muted);
-    padding: 6px 14px; border-radius: 7px; font-size: 13px; cursor: pointer;
-    font-family: 'Inter', sans-serif; transition: all .2s;
-  }
-  .logout-btn:hover { border-color: var(--danger); color: var(--danger); }
-  .main { padding: 32px; max-width: 1100px; margin: auto; }
-  .section-title {
-    font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
-    color: var(--accent); margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid var(--border);
-  }
-  .card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; margin-bottom: 24px; }
-  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  .form-group { display: flex; flex-direction: column; gap: 6px; }
-  .form-group label { font-size: 12px; font-weight: 600; color: var(--muted); letter-spacing: .5px; }
-  .form-group input, .form-group select {
-    background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
-    padding: 10px 14px; color: var(--text); font-family: 'Inter', sans-serif;
-    font-size: 14px; outline: none; transition: border-color .2s;
-  }
-  .form-group input:focus, .form-group select:focus { border-color: var(--accent); }
-  .btn { padding: 10px 22px; border-radius: 8px; border: none; font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; transition: all .2s; }
-  .btn-primary { background: var(--accent); color: #080810; }
-  .btn-primary:hover { background: var(--accent2); }
-  .btn-danger { background: transparent; border: 1px solid var(--danger); color: var(--danger); }
-  .btn-danger:hover { background: var(--danger); color: #fff; }
-  .btn-sm { padding: 5px 12px; font-size: 12px; }
-  .shops-table { width: 100%; border-collapse: collapse; }
-  .shops-table th { text-align: left; padding: 10px 14px; font-size: 11px; color: var(--muted); border-bottom: 1px solid var(--border); font-weight: 600; letter-spacing: .5px; text-transform: uppercase; }
-  .shops-table td { padding: 12px 14px; font-size: 14px; border-bottom: 1px solid var(--border); vertical-align: middle; }
-  .shops-table tr:last-child td { border-bottom: none; }
-  .shops-table tr:hover td { background: rgba(255,255,255,.02); }
-  .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; letter-spacing: .5px; }
-  .badge-active   { background: rgba(85,200,138,.15); color: var(--success); }
-  .badge-inactive { background: rgba(224,85,85,.15);  color: var(--danger); }
-  .link-cell { font-size: 12px; color: var(--accent); word-break: break-all; }
-  .link-cell a { color: inherit; text-decoration: none; }
-  .link-cell a:hover { text-decoration: underline; }
-  .actions { display: flex; gap: 8px; }
-  .toast {
-    position: fixed; bottom: 24px; left: 50%;
-    transform: translateX(-50%) translateY(80px);
-    padding: 12px 24px; border-radius: 8px; font-weight: 600; font-size: 14px;
-    transition: transform .3s; z-index: 999; white-space: nowrap;
-  }
-  .toast.show { transform: translateX(-50%) translateY(0); }
-  .err-box {
-    background: rgba(224,85,85,.1); border: 1px solid var(--danger);
-    border-radius: 8px; padding: 12px 16px; color: var(--danger);
-    font-size: 13px; margin-bottom: 16px; display: none;
-  }
-  .admin-row {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 10px 0; border-bottom: 1px solid var(--border);
-  }
-  .admin-row:last-child { border-bottom: none; }
+  #dashboard{display:none;min-height:100vh;}
+  header{background:var(--surface);border-bottom:1px solid var(--border);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10;}
+  header h1{font-size:18px;font-weight:700;color:var(--accent);}
+  .header-right{display:flex;align-items:center;gap:16px;}
+  .status-dot{width:8px;height:8px;border-radius:50%;background:var(--success);box-shadow:0 0 6px var(--success);}
+  .admin-user{font-size:13px;color:var(--muted);}
+  .logout-btn{background:transparent;border:1px solid var(--border);color:var(--muted);padding:6px 14px;border-radius:7px;font-size:13px;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;}
+  .logout-btn:hover{border-color:var(--danger);color:var(--danger);}
+  .main{padding:32px;max-width:1100px;margin:auto;}
+  .section-title{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:24px;}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .form-group{display:flex;flex-direction:column;gap:6px;}
+  .form-group label{font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.5px;}
+  .form-group input,.form-group select{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);font-family:'Inter',sans-serif;font-size:14px;outline:none;transition:border-color .2s;}
+  .form-group input:focus,.form-group select:focus{border-color:var(--accent);}
+  .btn{padding:10px 22px;border-radius:8px;border:none;font-family:'Inter',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;}
+  .btn-primary{background:var(--accent);color:#080810;}
+  .btn-primary:hover{background:var(--accent2);}
+  .btn-danger{background:transparent;border:1px solid var(--danger);color:var(--danger);}
+  .btn-danger:hover{background:var(--danger);color:#fff;}
+  .btn-sm{padding:5px 12px;font-size:12px;}
+  .shops-table{width:100%;border-collapse:collapse;}
+  .shops-table th{text-align:left;padding:10px 14px;font-size:11px;color:var(--muted);border-bottom:1px solid var(--border);font-weight:600;letter-spacing:.5px;text-transform:uppercase;}
+  .shops-table td{padding:12px 14px;font-size:14px;border-bottom:1px solid var(--border);vertical-align:middle;}
+  .shops-table tr:last-child td{border-bottom:none;}
+  .shops-table tr:hover td{background:rgba(255,255,255,.02);}
+  .badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.5px;}
+  .badge-active{background:rgba(85,200,138,.15);color:var(--success);}
+  .badge-inactive{background:rgba(224,85,85,.15);color:var(--danger);}
+  .link-cell{font-size:12px;color:var(--accent);word-break:break-all;}
+  .link-cell a{color:inherit;text-decoration:none;}
+  .link-cell a:hover{text-decoration:underline;}
+  .actions{display:flex;gap:8px;}
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);padding:12px 24px;border-radius:8px;font-weight:600;font-size:14px;transition:transform .3s;z-index:999;white-space:nowrap;}
+  .toast.show{transform:translateX(-50%) translateY(0);}
+  .err-box{background:rgba(224,85,85,.1);border:1px solid var(--danger);border-radius:8px;padding:12px 16px;color:var(--danger);font-size:13px;margin-bottom:16px;display:none;}
+  .admin-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);}
+  .admin-row:last-child{border-bottom:none;}
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;display:none;align-items:center;justify-content:center;}
+  .modal-overlay.open{display:flex;}
+  .modal-box{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:32px;width:100%;max-width:480px;box-shadow:0 24px 60px rgba(0,0,0,.5);}
+  .modal-box h3{font-size:16px;font-weight:700;color:var(--accent);margin-bottom:20px;}
+  .modal-field{margin-bottom:14px;}
+  .modal-field label{display:block;font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.5px;margin-bottom:6px;}
+  .modal-field input,.modal-field select,.modal-field textarea{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);font-family:"Inter",sans-serif;font-size:14px;outline:none;transition:border-color .2s;resize:vertical;}
+  .modal-field input:focus,.modal-field select:focus,.modal-field textarea:focus{border-color:var(--accent);}
+  .modal-actions{display:flex;gap:10px;margin-top:20px;}
+  .modal-actions .btn{flex:1;}
+  .btn-secondary{background:transparent;border:1px solid var(--border);color:var(--muted);}
+  .btn-secondary:hover{border-color:var(--text);color:var(--text);}
 </style>
 </head>
 <body>
@@ -171,7 +118,6 @@
     </div>
   </header>
   <div class="main">
-
     <div class="err-box" id="errBox"></div>
 
     <!-- Add Shop -->
@@ -209,6 +155,18 @@
             <option value="inactive">Inactive</option>
           </select>
         </div>
+        <div class="form-group">
+          <label>Shop Type</label>
+          <select id="newShopType">
+                <option value="">-- General --</option>
+                <option value="restaurant">Restaurant</option>
+                <option value="cafe">Cafe</option>
+                <option value="pool">Pool</option>
+                <option value="bakery">Bakery</option>
+                <option value="juice">Juice / Drinks</option>
+                <option value="hotel">Hotel</option>
+          </select>
+        </div>
       </div>
       <button class="btn btn-primary" id="saveShopBtn">💾 Save Shop</button>
     </div>
@@ -228,52 +186,85 @@
       </table>
       <div id="shopsEmpty" style="display:none;text-align:center;color:var(--muted);padding:20px">No shops yet.</div>
     </div>
-
-    <!-- Admin Users -->
-    <div class="card">
-      <div class="section-title">👤 Admin Users</div>
-      <div class="form-grid" style="margin-bottom:16px">
-        <div class="form-group">
-          <label>New Username</label>
-          <input id="newAdminUser" placeholder="username" />
-        </div>
-        <div class="form-group">
-          <label>New Password (min 6 chars)</label>
-          <input id="newAdminPass" type="password" placeholder="••••••••" />
-        </div>
-      </div>
-      <button class="btn btn-primary" id="addAdminBtn">➕ Add Admin</button>
-      <div id="adminsList" style="margin-top:16px"></div>
-    </div>
-
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
+<!-- Edit Shop Modal -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal-box">
+    <h3>Edit Shop</h3>
+    <input type="hidden" id="editDocId" />
+    <div class="modal-field">
+      <label>Shop ID (read-only)</label>
+      <input id="editShopId" disabled style="opacity:.5;" />
+    </div>
+    <div class="modal-field">
+      <label>Shop Name</label>
+      <input id="editName" placeholder="Restaurant name" />
+    </div>
+    <div class="modal-field">
+      <label>Description</label>
+      <textarea id="editDesc" rows="2" placeholder="Short description..."></textarea>
+    </div>
+    <div class="modal-field">
+      <label>Upload Token</label>
+      <input id="editToken" placeholder="upload token" />
+    </div>
+    <div class="modal-field">
+      <label>Display Currency</label>
+      <select id="editCurrency">
+        <option value="usd">US Dollar $</option>
+        <option value="lbp">Lebanese Pound</option>
+        <option value="both">Both</option>
+      </select>
+    </div>
+    <div class="modal-field">
+      <label>Status</label>
+      <select id="editStatus">
+        <option value="active">Active</option>
+        <option value="inactive">Inactive</option>
+      </select>
+    </div>
+    <div class="modal-field">
+      <label>Shop Type</label>
+      <select id="editType">
+        <option value="">-- General --</option>
+        <option value="restaurant">Restaurant</option>
+        <option value="cafe">Cafe</option>
+        <option value="pool">Pool</option>
+        <option value="bakery">Bakery</option>
+        <option value="juice">Juice / Drinks</option>
+        <option value="hotel">Hotel</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" id="editCancelBtn">Cancel</button>
+      <button class="btn btn-primary"   id="editSaveBtn">Save Changes</button>
+    </div>
+  </div>
+</div>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-app.js";
-import {
-  getFirestore, collection, doc,
-  setDoc, getDoc, getDocs, deleteDoc, updateDoc
-} from "https://www.gstatic.com/firebasejs/11.9.0/firebase-firestore.js";
+import { getFirestore, collection, doc, setDoc, getDoc, getDocs, deleteDoc, updateDoc }
+  from "https://www.gstatic.com/firebasejs/11.9.0/firebase-firestore.js";
 
-// ── Config ────────────────────────────────────────────────────────────
 const FB_CONFIG = {
-  apiKey:            "AIzaSyCyizOZNUcbczGjh1P0sxn85LoiLI9Q0yw",
-  authDomain:        "sahashop-97ae5.firebaseapp.com",
-  databaseURL:       "https://sahashop-97ae5-default-rtdb.firebaseio.com",
-  projectId:         "sahashop-97ae5",
-  storageBucket:     "sahashop-97ae5.firebasestorage.app",
-  messagingSenderId: "620364206298",
-  appId:             "1:620364206298:web:bb9a99e5e60e4be3dad5e3"
+  apiKey:"AIzaSyCyizOZNUcbczGjh1P0sxn85LoiLI9Q0yw",
+  authDomain:"sahashop-97ae5.firebaseapp.com",
+  databaseURL:"https://sahashop-97ae5-default-rtdb.firebaseio.com",
+  projectId:"sahashop-97ae5",
+  storageBucket:"sahashop-97ae5.firebasestorage.app",
+  messagingSenderId:"620364206298",
+  appId:"1:620364206298:web:bb9a99e5e60e4be3dad5e3"
 };
 const MENU_BASE = "https://delivolb.github.io/shopmenus/menu.html";
-// ─────────────────────────────────────────────────────────────────────
 
 let db, currentAdmin;
 
-// ── Helpers ───────────────────────────────────────────────────────────
+// ── Helpers ──────────────────────────────────────────────────────────────────
 function toast(msg, err=false) {
   const t = document.getElementById('toast');
   t.textContent = msg;
@@ -284,129 +275,119 @@ function toast(msg, err=false) {
 }
 function loginErr(msg) {
   const e = document.getElementById('loginError');
-  e.textContent = msg;
-  e.style.display = msg ? 'block' : 'none';
+  e.textContent = msg; e.style.display = msg ? 'block' : 'none';
 }
 function dashErr(msg) {
   const b = document.getElementById('errBox');
-  b.textContent = msg ? '❌ ' + msg : '';
-  b.style.display = msg ? 'block' : 'none';
+  b.textContent = msg ? '❌ ' + msg : ''; b.style.display = msg ? 'block' : 'none';
 }
 async function sha256(str) {
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
   return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
 }
 
-// ── Init Firebase ─────────────────────────────────────────────────────
+// ── Init Firebase ─────────────────────────────────────────────────────────────
 try {
   const app = initializeApp(FB_CONFIG);
   db = getFirestore(app);
   console.log('[Admin] Firebase ready');
 } catch(e) {
-  console.error('[Admin] Firebase init failed:', e);
-  document.getElementById('loginError').textContent = 'Firebase connection failed: ' + e.message;
+  document.getElementById('loginError').textContent = 'Firebase error: ' + e.message;
   document.getElementById('loginError').style.display = 'block';
 }
 
-// ── Login ─────────────────────────────────────────────────────────────
+// ── Login ─────────────────────────────────────────────────────────────────────
 async function doLogin() {
   loginErr('');
   const username = document.getElementById('loginUser').value.trim();
   const password = document.getElementById('loginPass').value;
   if (!username || !password) return loginErr('Please enter username and password.');
   if (!db) return loginErr('Not connected to Firebase.');
-
   const btn = document.getElementById('loginBtn');
-  btn.disabled = true;
-  btn.textContent = 'Signing in...';
-
+  btn.disabled = true; btn.textContent = 'Signing in...';
   try {
-    // Check if any admins exist
     const allSnap = await getDocs(collection(db, "admins"));
-
     if (allSnap.empty) {
-      // First ever login — bootstrap first admin account
       const hash = await sha256(password);
       await setDoc(doc(db, "admins", username), {
-        username, passwordHash: hash,
-        role: 'superadmin',
+        username, passwordHash: hash, role: 'superadmin',
         createdAt: new Date().toISOString()
       });
-      currentAdmin = username;
-      showDashboard();
-      toast('First admin account created!');
-      return;
+      currentAdmin = username; localStorage.setItem('sq_admin_user', username); showDashboard();
+      toast('First admin account created!'); return;
     }
-
-    // Normal login — check credentials
     const adminSnap = await getDoc(doc(db, "admins", username));
     if (!adminSnap.exists()) return loginErr('Username not found.');
-
     const hash = await sha256(password);
     if (adminSnap.data().passwordHash !== hash) return loginErr('Incorrect password.');
-
-    currentAdmin = username;
-    showDashboard();
-
-  } catch(e) {
-    console.error('[Login error]', e);
-    loginErr('Login error: ' + e.message);
-  } finally {
-    btn.disabled = false;
-    btn.textContent = 'Sign In';
-  }
+    currentAdmin = username; localStorage.setItem('sq_admin_user', username); showDashboard();
+  } catch(e) { loginErr('Login error: ' + e.message); }
+  finally { btn.disabled = false; btn.textContent = 'Sign In'; }
 }
 
 function showDashboard() {
-  console.log('[Admin] Entering dashboard as:', currentAdmin);
   document.getElementById('loginScreen').style.display = 'none';
-  document.getElementById('dashboard').style.display   = 'block';
+  document.getElementById('dashboard').style.display = 'block';
   document.getElementById('adminUserLabel').textContent = '👤 ' + currentAdmin;
+  console.log('[Admin] Entering dashboard as:', currentAdmin);
   loadShops();
-  loadAdmins();
 }
 
 function doLogout() {
-  currentAdmin = null;
+  currentAdmin = null; localStorage.removeItem('sq_admin_user');
   document.getElementById('loginScreen').style.display = 'flex';
-  document.getElementById('dashboard').style.display   = 'none';
+  document.getElementById('dashboard').style.display = 'none';
   document.getElementById('loginUser').value = '';
   document.getElementById('loginPass').value = '';
   loginErr('');
 }
 
-// ── Shops ─────────────────────────────────────────────────────────────
+// ── Shops ─────────────────────────────────────────────────────────────────────
 async function loadShops() {
   document.getElementById('shopsLoading').style.display = 'block';
-  document.getElementById('shopsTable').style.display   = 'none';
-  document.getElementById('shopsEmpty').style.display   = 'none';
+  document.getElementById('shopsTable').style.display = 'none';
+  document.getElementById('shopsEmpty').style.display = 'none';
   try {
     const snap = await getDocs(collection(db, "shops"));
     const tbody = document.getElementById('shopsTbody');
     tbody.innerHTML = '';
     if (snap.empty) {
       document.getElementById('shopsLoading').style.display = 'none';
-      document.getElementById('shopsEmpty').style.display   = 'block';
+      document.getElementById('shopsEmpty').style.display = 'block';
       return;
     }
     snap.forEach(d => {
-      const s = d.data();
-      const url = MENU_BASE + '?shop=' + s.shopId;
-      const tr = document.createElement('tr');
+      const s   = d.data();
+      const docId = d.id;  // ← always use the real Firestore document ID
+
+      // Skip or flag corrupted docs (missing shopId field)
+      const displayId   = s.shopId || docId;
+      const displayName = s.name   || '⚠️ corrupted';
+      const isBroken    = !s.shopId && !s.name;
+
+      const url = MENU_BASE + '?shop=' + displayId;
+      const tr  = document.createElement('tr');
+      if (isBroken) tr.style.opacity = '0.6';
+
       tr.innerHTML =
-        '<td><code style="color:var(--accent);font-size:13px">'+s.shopId+'</code></td>' +
-        '<td style="font-weight:500">'+s.name+'</td>' +
-        '<td>'+(s.currency==='usd'?'$ USD':s.currency==='lbp'?'ل.ل LBP':'Both')+'</td>' +
-        '<td><span class="badge badge-'+(s.status==='active'?'active':'inactive')+'">'+(s.status==='active'?'Active':'Inactive')+'</span></td>' +
-        '<td class="link-cell"><a href="'+url+'" target="_blank">'+url+'</a></td>' +
+        '<td><code style="color:var(--accent);font-size:13px">' + displayId + '</code>' +
+          (isBroken ? ' <span style="color:var(--danger);font-size:11px">⚠ broken</span>' : '') + '</td>' +
+        '<td style="font-weight:500">' + displayName + '</td>' +
+        '<td>' + (s.currency==='usd'?'$ USD':s.currency==='lbp'?'ل.ل LBP':'Both') + '</td>' +
+        '<td><span class="badge badge-' + (s.status==='active'?'active':'inactive') + '">' +
+          (s.status==='active'?'Active':'Inactive') + '</span></td>' +
+        '<td class="link-cell">' + (isBroken ? '—' : '<a href="'+url+'" target="_blank">'+url+'</a>') + '</td>' +
         '<td><div class="actions">' +
-          '<button class="btn btn-sm btn-danger"  data-del="'+s.shopId+'">Delete</button>' +
-          '<button class="btn btn-sm btn-primary" data-tog="'+s.shopId+'" data-st="'+s.status+'">'+(s.status==='active'?'Deactivate':'Activate')+'</button>' +
+          '<button class="btn btn-sm btn-danger"  data-del="'  + docId + '">Delete</button>' +
+          '<button class="btn btn-sm btn-primary" data-tog="'  + docId + '" data-st="'+(s.status||'inactive')+'">' +
+            (s.status==='active'?'Deactivate':'Activate') +
+          '</button>' +
+          '<button class="btn btn-sm btn-secondary" data-edit="' + docId + '">Edit</button>' +
         '</div></td>';
       tbody.appendChild(tr);
     });
     document.getElementById('shopsLoading').style.display = 'none';
-    document.getElementById('shopsTable').style.display   = '';
+    document.getElementById('shopsTable').style.display = '';
   } catch(e) {
     dashErr('Failed to load shops: ' + e.message);
     document.getElementById('shopsLoading').style.display = 'none';
@@ -420,103 +401,128 @@ async function addShop() {
   const token    = document.getElementById('newShopToken').value.trim();
   const currency = document.getElementById('newShopCurrency').value;
   const status   = document.getElementById('newShopStatus').value;
-  if (!shopId)   return toast('Enter a Shop ID', true);
-  if (!shopName) return toast('Enter a Shop Name', true);
-  if (!token)    return toast('Enter an Upload Token', true);
+  const type     = document.getElementById('newShopType').value;
+
+  // Strong validation — prevent undefined/empty saves
+  if (!shopId)   return toast('Shop ID is required', true);
+  if (!shopName) return toast('Shop Name is required', true);
+  if (!token)    return toast('Upload Token is required', true);
+  if (shopId === 'undefined' || shopId === 'null')
+    return toast('Invalid Shop ID', true);
+
   const btn = document.getElementById('saveShopBtn');
   btn.textContent = '⏳ Saving...'; btn.disabled = true;
   try {
+    // Use shopId as the document key AND store it as a field
     await setDoc(doc(db, "shops", shopId), {
       shopId, name: shopName, description: desc,
-      token, currency, status,
+      token, currency, status, type,
       createdAt: new Date().toISOString()
     });
     toast('Shop saved: ' + shopName);
-    ['newShopId','newShopName','newShopDesc','newShopToken'].forEach(id => document.getElementById(id).value='');
+    ['newShopId','newShopName','newShopDesc','newShopToken'].forEach(id =>
+      document.getElementById(id).value = '');
     await loadShops();
   } catch(e) {
     dashErr('Save failed: ' + e.message);
     toast('Save failed', true);
-  } finally {
-    btn.textContent = '💾 Save Shop'; btn.disabled = false;
-  }
+  } finally { btn.textContent = '💾 Save Shop'; btn.disabled = false; }
 }
 
-// ── Admin Users ───────────────────────────────────────────────────────
-async function loadAdmins() {
+// ── Event Delegation ──────────────────────────────────────────────────────────
+
+// ── Edit Shop ─────────────────────────────────────────────────────────────────
+function openEditModal(docId, s) {
+  document.getElementById('editDocId').value    = docId;
+  document.getElementById('editShopId').value   = s.shopId || docId;
+  document.getElementById('editName').value     = s.name        || '';
+  document.getElementById('editDesc').value     = s.description || '';
+  document.getElementById('editToken').value    = s.token       || '';
+  document.getElementById('editCurrency').value = s.currency    || 'both';
+  document.getElementById('editStatus').value   = s.status      || 'active';
+  document.getElementById('editType').value     = s.type        || '';
+  document.getElementById('editModal').classList.add('open');
+  document.getElementById('editName').focus();
+}
+
+async function saveEdit() {
+  const docId    = document.getElementById('editDocId').value;
+  const name     = document.getElementById('editName').value.trim();
+  const desc     = document.getElementById('editDesc').value.trim();
+  const token    = document.getElementById('editToken').value.trim();
+  const currency = document.getElementById('editCurrency').value;
+  const status   = document.getElementById('editStatus').value;
+  const type     = document.getElementById('editType').value;
+  if (!name)  return toast('Shop Name is required', true);
+  if (!token) return toast('Upload Token is required', true);
+  const btn = document.getElementById('editSaveBtn');
+  btn.textContent = 'Saving...'; btn.disabled = true;
   try {
-    const snap = await getDocs(collection(db, "admins"));
-    const list = document.getElementById('adminsList');
-    list.innerHTML = '';
-    snap.forEach(d => {
-      const a = d.data();
-      const row = document.createElement('div');
-      row.className = 'admin-row';
-      row.innerHTML =
-        '<span style="font-size:14px">👤 <strong>'+a.username+'</strong>' +
-        '<span style="color:var(--muted);font-size:12px;margin-left:8px">'+( a.role||'admin')+'</span></span>' +
-        (a.username !== currentAdmin
-          ? '<button class="btn btn-sm btn-danger" data-deladmin="'+a.username+'">Remove</button>'
-          : '<span style="font-size:12px;color:var(--muted)">(you)</span>');
-      list.appendChild(row);
-    });
-  } catch(e) { console.error('loadAdmins:', e); }
+    await updateDoc(doc(db, "shops", docId), { name, description: desc, token, currency, status, type });
+    document.getElementById('editModal').classList.remove('open');
+    toast('Shop updated: ' + name);
+    loadShops();
+  } catch(e) { toast('Save failed: ' + e.message, true); }
+  finally { btn.textContent = 'Save Changes'; btn.disabled = false; }
 }
 
-async function addAdmin() {
-  const user = document.getElementById('newAdminUser').value.trim();
-  const pass = document.getElementById('newAdminPass').value;
-  if (!user || !pass) return toast('Enter username and password', true);
-  if (pass.length < 6) return toast('Password must be at least 6 characters', true);
-  try {
-    const hash = await sha256(pass);
-    await setDoc(doc(db, "admins", user), {
-      username: user, passwordHash: hash,
-      role: 'admin', createdAt: new Date().toISOString()
-    });
-    toast('Admin added: ' + user);
-    document.getElementById('newAdminUser').value = '';
-    document.getElementById('newAdminPass').value = '';
-    await loadAdmins();
-  } catch(e) { toast('Failed: ' + e.message, true); }
+function closeEditModal() {
+  document.getElementById('editModal').classList.remove('open');
 }
 
-// ── Event delegation (avoids onclick in dynamic HTML) ─────────────────
 document.addEventListener('click', async e => {
-  // Login button
-  if (e.target.id === 'loginBtn') { doLogin(); return; }
-  // Logout
-  if (e.target.id === 'logoutBtn') { doLogout(); return; }
-  // Save shop
-  if (e.target.id === 'saveShopBtn') { addShop(); return; }
-  // Add admin
-  if (e.target.id === 'addAdminBtn') { addAdmin(); return; }
-  // Delete shop
+  if (e.target.id === 'loginBtn')    { doLogin();   return; }
+  if (e.target.id === 'logoutBtn')   { doLogout();  return; }
+  if (e.target.id === 'saveShopBtn') { addShop();   return; }
+
+  // Delete shop — uses d.id (real Firestore doc key), never s.shopId
   if (e.target.dataset.del) {
-    const id = e.target.dataset.del;
-    if (!confirm('Delete shop "'+id+'"?')) return;
-    try { await deleteDoc(doc(db,"shops",id)); toast('Deleted'); loadShops(); }
-    catch(err) { toast('Delete failed',true); }
+    const docId = e.target.dataset.del;
+    if (!confirm('Delete shop "' + docId + '"? This cannot be undone.')) return;
+    try {
+      await deleteDoc(doc(db, "shops", docId));
+      toast('Shop deleted');
+      loadShops();
+    } catch(err) { toast('Delete failed: ' + err.message, true); }
     return;
   }
+
   // Toggle shop status
   if (e.target.dataset.tog) {
-    const id = e.target.dataset.tog;
+    const docId = e.target.dataset.tog;
     const ns = e.target.dataset.st === 'active' ? 'inactive' : 'active';
-    try { await updateDoc(doc(db,"shops",id),{status:ns}); toast('Updated'); loadShops(); }
-    catch(err) { toast('Update failed',true); }
+    try {
+      await updateDoc(doc(db, "shops", docId), { status: ns });
+      toast('Status updated');
+      loadShops();
+    } catch(err) { toast('Update failed: ' + err.message, true); }
     return;
   }
-  // Delete admin
-  if (e.target.dataset.deladmin) {
-    const u = e.target.dataset.deladmin;
-    if (!confirm('Remove admin "'+u+'"?')) return;
-    try { await deleteDoc(doc(db,"admins",u)); toast('Admin removed'); loadAdmins(); }
-    catch(err) { toast('Failed',true); }
+  // Edit shop
+  if (e.target.dataset.edit) {
+    const docId = e.target.dataset.edit;
+    try { const sn = await getDoc(doc(db,"shops",docId)); if(sn.exists()) openEditModal(docId,sn.data()); }
+    catch(err) { toast("Failed to load shop",true); }
+    return;
   }
+
 });
 
-// Enter key on login fields
+// Auto-restore session from localStorage
+async function tryAutoLogin() {
+  const saved = localStorage.getItem('sq_admin_user');
+  if (!saved || !db) return;
+  try {
+    const snap = await getDoc(doc(db, 'admins', saved));
+    if (snap.exists()) { currentAdmin = saved; showDashboard(); }
+    else localStorage.removeItem('sq_admin_user');
+  } catch(e) { localStorage.removeItem('sq_admin_user'); }
+}
+tryAutoLogin();
+
+document.getElementById('editSaveBtn').addEventListener('click', saveEdit);
+document.getElementById('editCancelBtn').addEventListener('click', closeEditModal);
+document.getElementById('editModal').addEventListener('click', e => { if(e.target===document.getElementById('editModal')) closeEditModal(); });
 document.getElementById('loginUser').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('loginPass').focus(); });
 document.getElementById('loginPass').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
 </script>
