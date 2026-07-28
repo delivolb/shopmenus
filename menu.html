@@ -142,6 +142,7 @@ html,body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--dark
   font-size:clamp(11px,2.5vw,13px);
   color:rgba(255,255,255,.5);
   margin-top:4px;position:relative;
+  white-space:pre-line;
 }
 .hero-line{
   width:50px;height:2px;margin:10px auto 0;position:relative;
@@ -293,6 +294,22 @@ footer{
   letter-spacing:.5px;
 }
 footer span{color:var(--accent);font-weight:600;}
+
+/* ── WhatsApp Floating Button ── */
+#waFab{
+  position:fixed;bottom:20px;inset-inline-end:20px;z-index:200;
+  width:56px;height:56px;border-radius:50%;
+  background:#25D366;color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 16px rgba(0,0,0,.3);
+  text-decoration:none;
+  animation:fadeUp .3s ease both;
+  transition:transform .2s,box-shadow .2s;
+}
+#waFab svg{width:30px;height:30px;}
+@media(hover:hover){#waFab:hover{transform:scale(1.08);box-shadow:0 6px 20px rgba(0,0,0,.35);}}
+#waFab:active{transform:scale(.96);}
+
 </style>
 </head>
 <body>
@@ -323,6 +340,10 @@ footer span{color:var(--accent);font-weight:600;}
     <footer>Powered by <span>Squares POS</span></footer>
   </div>
 </div>
+
+<a id="waFab" href="#" target="_blank" rel="noopener" style="display:none" aria-label="واتساب">
+  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12.004 2C6.486 2 2.01 6.477 2.01 11.994c0 2.114.552 4.096 1.514 5.816L2 22l4.312-1.494a9.947 9.947 0 0 0 5.692 1.78h.004c5.518 0 9.993-4.478 9.993-9.994C21.998 6.477 17.522 2 12.004 2zm0 18.163a8.15 8.15 0 0 1-4.152-1.133l-.298-.177-3.083 1.068 1.084-3.006-.194-.309a8.14 8.14 0 0 1-1.256-4.362c0-4.5 3.66-8.163 8.16-8.163 2.179 0 4.226.85 5.766 2.393a8.106 8.106 0 0 1 2.393 5.775c0 4.5-3.66 8.914-8.42 8.914z"/></svg>
+</a>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-app.js";
@@ -450,6 +471,24 @@ function scrollTabIntoView(tab){
   else if(l+w>sl+nw)nav.scrollTo({left:l+w-nw+8,behavior:'smooth'});
 }
 
+// ── WhatsApp floating button ────────────────────────────────────────────────
+function normalizePhone(raw){
+  let d=(raw||'').replace(/\D/g,'');
+  if(!d)return'';
+  if(d.startsWith('00'))d=d.slice(2);
+  if(d.startsWith('961'))return d;
+  if(d.startsWith('0'))return'961'+d.slice(1);
+  return'961'+d;
+}
+function setupWhatsappFab(rawNumber,shopName){
+  const fab=document.getElementById('waFab');
+  const num=normalizePhone(rawNumber);
+  if(!num){fab.style.display='none';return;}
+  const msg=encodeURIComponent('مرحباً، أرغب بالاستفسار عن '+shopName);
+  fab.href='https://wa.me/'+num+'?text='+msg;
+  fab.style.display='flex';
+}
+
 // ── Search state ──────────────────────────────────────────────────────────────
 let currentSections=[];
 
@@ -476,6 +515,8 @@ async function main(){
     document.getElementById('shopName').textContent=sh.name||shopId;
     document.getElementById('shopDesc').textContent=sh.description||'';
     document.title=(sh.name||shopId)+' — القائمة';
+
+    setupWhatsappFab(sh.whatsapp,sh.name||shopId);
 
     if(sh.lastSync){
       const el=document.getElementById('lastSync');

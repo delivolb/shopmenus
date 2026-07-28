@@ -45,8 +45,8 @@
   .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
   .form-group{display:flex;flex-direction:column;gap:6px;}
   .form-group label{font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.5px;}
-  .form-group input,.form-group select{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);font-family:'Inter',sans-serif;font-size:14px;outline:none;transition:border-color .2s;}
-  .form-group input:focus,.form-group select:focus{border-color:var(--accent);}
+  .form-group input,.form-group select,.form-group textarea{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);font-family:'Inter',sans-serif;font-size:14px;outline:none;transition:border-color .2s;resize:vertical;}
+  .form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--accent);}
   .btn{padding:10px 22px;border-radius:8px;border:none;font-family:'Inter',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;}
   .btn-primary{background:var(--accent);color:#080810;}
   .btn-primary:hover{background:var(--accent2);}
@@ -134,11 +134,15 @@
         </div>
         <div class="form-group">
           <label>Short Description (optional)</label>
-          <input id="newShopDesc" placeholder="Lebanese restaurant in Baalbek" />
+          <textarea id="newShopDesc" rows="2" placeholder="Lebanese restaurant in Baalbek"></textarea>
         </div>
         <div class="form-group">
           <label>Upload Token (given to the shop owner)</label>
           <input id="newShopToken" placeholder="e.g. cafe123" />
+        </div>
+        <div class="form-group">
+          <label>WhatsApp Number (optional)</label>
+          <input id="newShopWhatsapp" placeholder="+961 3 101 797" />
         </div>
         <div class="form-group">
           <label>Display Currency</label>
@@ -212,6 +216,10 @@
     <div class="modal-field">
       <label>Upload Token</label>
       <input id="editToken" placeholder="upload token" />
+    </div>
+    <div class="modal-field">
+      <label>WhatsApp Number</label>
+      <input id="editWhatsapp" placeholder="+961 3 101 797" />
     </div>
     <div class="modal-field">
       <label>Display Currency</label>
@@ -401,6 +409,7 @@ async function addShop() {
   const shopName = document.getElementById('newShopName').value.trim();
   const desc     = document.getElementById('newShopDesc').value.trim();
   const token    = document.getElementById('newShopToken').value.trim();
+  const whatsapp = document.getElementById('newShopWhatsapp').value.trim();
   const currency = document.getElementById('newShopCurrency').value;
   const status   = document.getElementById('newShopStatus').value;
   const type     = document.getElementById('newShopType').value;
@@ -418,11 +427,11 @@ async function addShop() {
     // Use shopId as the document key AND store it as a field
     await setDoc(doc(db, "shops", shopId), {
       shopId, name: shopName, description: desc,
-      token, currency, status, type,
+      token, whatsapp, currency, status, type,
       createdAt: new Date().toISOString()
     });
     toast('Shop saved: ' + shopName);
-    ['newShopId','newShopName','newShopDesc','newShopToken'].forEach(id =>
+    ['newShopId','newShopName','newShopDesc','newShopToken','newShopWhatsapp'].forEach(id =>
       document.getElementById(id).value = '');
     await loadShops();
   } catch(e) {
@@ -440,6 +449,7 @@ function openEditModal(docId, s) {
   document.getElementById('editName').value     = s.name        || '';
   document.getElementById('editDesc').value     = s.description || '';
   document.getElementById('editToken').value    = s.token       || '';
+  document.getElementById('editWhatsapp').value = s.whatsapp    || '';
   document.getElementById('editCurrency').value = s.currency    || 'both';
   document.getElementById('editStatus').value   = s.status      || 'active';
   document.getElementById('editType').value     = s.type        || '';
@@ -452,6 +462,7 @@ async function saveEdit() {
   const name     = document.getElementById('editName').value.trim();
   const desc     = document.getElementById('editDesc').value.trim();
   const token    = document.getElementById('editToken').value.trim();
+  const whatsapp = document.getElementById('editWhatsapp').value.trim();
   const currency = document.getElementById('editCurrency').value;
   const status   = document.getElementById('editStatus').value;
   const type     = document.getElementById('editType').value;
@@ -460,7 +471,7 @@ async function saveEdit() {
   const btn = document.getElementById('editSaveBtn');
   btn.textContent = 'Saving...'; btn.disabled = true;
   try {
-    await updateDoc(doc(db, "shops", docId), { name, description: desc, token, currency, status, type });
+    await updateDoc(doc(db, "shops", docId), { name, description: desc, token, whatsapp, currency, status, type });
     document.getElementById('editModal').classList.remove('open');
     toast('Shop updated: ' + name);
     loadShops();
