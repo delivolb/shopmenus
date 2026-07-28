@@ -66,6 +66,14 @@
   --nav-active:#5b48c8; --price-color:#5b48c8;
   --bg:#f5f4fd; --border:#dcd8f5;
 }
+/* ── COMPUTER SHOP theme ── */
+.theme-computer {
+  --hero-from:#0a1218; --hero-to:#122436;
+  --hero-glow:rgba(30,160,190,.3);
+  --accent:#1c8fa8; --accent2:#33c2d6;
+  --nav-active:#1c8fa8; --price-color:#1c8fa8;
+  --bg:#f4fafb; --border:#d6ecf0;
+}
 
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 html,body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--dark);direction:rtl;min-height:100vh;overflow-x:hidden;transition:background .4s;}
@@ -182,6 +190,39 @@ html,body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--dark
 }
 #lastSync.visible{display:block;}
 
+/* ── Search Bar ── */
+#searchBarWrap{
+  background:var(--nav-bg);
+  border-bottom:1px solid var(--border);
+  padding:10px clamp(12px,3vw,18px);
+  flex-shrink:0;
+}
+#searchBox{
+  position:relative;max-width:740px;margin:0 auto;
+  display:flex;align-items:center;
+  background:var(--bg);
+  border:1px solid var(--border);
+  border-radius:999px;
+  padding:0 12px;
+  transition:border-color .2s,box-shadow .2s;
+}
+#searchBox:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px rgba(0,0,0,.04);}
+#searchBox svg{flex-shrink:0;width:16px;height:16px;color:var(--muted);}
+#menuSearch{
+  flex:1;border:0;background:transparent;outline:0;
+  padding:9px 8px;font-family:inherit;
+  font-size:clamp(13px,3.5vw,14px);color:var(--dark);
+}
+#menuSearch::placeholder{color:var(--muted);}
+#searchClear{
+  display:none;flex-shrink:0;border:0;background:transparent;cursor:pointer;
+  color:var(--muted);font-size:16px;line-height:1;padding:4px 2px;
+}
+#searchClear:hover{color:var(--accent);}
+#searchClear.visible{display:block;}
+#noResults{display:none;text-align:center;color:var(--muted);margin-top:48px;font-size:14px;}
+#noResults.show{display:block;}
+
 /* ── Page Body ── */
 #pageBody{padding-top:var(--topbar-h);}
 #content{padding:clamp(14px,3vw,24px) clamp(12px,3vw,18px) 80px;max-width:740px;margin:0 auto;width:100%;}
@@ -267,6 +308,13 @@ footer span{color:var(--accent);font-weight:600;}
       <div id="shopDesc"></div>
       <div class="hero-line"></div>
     </div>
+    <div id="searchBarWrap">
+      <div id="searchBox">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input id="menuSearch" type="text" placeholder="ابحث في القائمة..." autocomplete="off" />
+        <button id="searchClear" type="button" aria-label="مسح">✕</button>
+      </div>
+    </div>
     <div id="catNavWrap"><nav id="catNav"></nav></div>
     <div id="lastSync"></div>
   </div>
@@ -328,6 +376,12 @@ const TYPE_CONFIG = {
     emoji: '🏨',
     theme: 'theme-hotel',
     pattern: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolygon points='20,4 36,36 4,36' fill='none' stroke='%23fff' stroke-width='1.5'/%3E%3C/svg%3E")`
+  },
+  computer: {
+    label: 'متجر كمبيوتر',
+    emoji: '💻',
+    theme: 'theme-computer',
+    pattern: `url("data:image/svg+xml,%3Csvg width='36' height='36' viewBox='0 0 36 36' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='4' y='6' width='28' height='18' rx='2' fill='none' stroke='%23fff' stroke-width='1.5'/%3E%3Cline x1='14' y1='30' x2='22' y2='30' stroke='%23fff' stroke-width='1.5'/%3E%3Cline x1='18' y1='24' x2='18' y2='30' stroke='%23fff' stroke-width='1.5'/%3E%3C/svg%3E")`
   }
 };
 
@@ -396,6 +450,9 @@ function scrollTabIntoView(tab){
   else if(l+w>sl+nw)nav.scrollTo({left:l+w-nw+8,behavior:'smooth'});
 }
 
+// ── Search state ──────────────────────────────────────────────────────────────
+let currentSections=[];
+
 // ── Main ──────────────────────────────────────────────────────────────────────
 async function main(){
   const shopId=(new URLSearchParams(location.search).get('shop')||'').replace(/['"]/g,'').trim();
@@ -455,6 +512,7 @@ function renderMenu(cats,bycat,currency){
 
   if(!cats.length){
     content.innerHTML='<p style="text-align:center;color:var(--muted);margin-top:48px;font-size:15px">القائمة فارغة حالياً.</p>';
+    currentSections=[];
     return;
   }
 
@@ -485,6 +543,7 @@ function renderMenu(cats,bycat,currency){
       const card=document.createElement('div');
       card.className='item-card';
       card.style.animationDelay=Math.min(idx*.04,.4)+'s';
+      card.dataset.search=((it.name||'')+' '+(it.desc||'')).toLowerCase();
 
       const rawPrice=(it.saledTable&&parseFloat(it.saledTable)>0)?parseFloat(it.saledTable):(parseFloat(it.saled)||0);
       let priceHtml;
@@ -509,6 +568,11 @@ function renderMenu(cats,bycat,currency){
     sections.push({sec,tab});
   });
 
+  currentSections=sections;
+  const nr=document.createElement('p');
+  nr.id='noResults';nr.textContent='لا توجد نتائج مطابقة.';
+  content.appendChild(nr);
+
   // Scroll spy
   const topBar=document.getElementById('topBar');
   const io=new IntersectionObserver(entries=>{
@@ -520,7 +584,39 @@ function renderMenu(cats,bycat,currency){
     });
   },{rootMargin:'-'+(topBar.offsetHeight+2)+'px 0px -55% 0px',threshold:0});
   sections.forEach(({sec})=>io.observe(sec));
+
+  applySearch(document.getElementById('menuSearch').value);
 }
+
+// ── Search ────────────────────────────────────────────────────────────────────
+function applySearch(qRaw){
+  const q=(qRaw||'').trim().toLowerCase();
+  document.getElementById('searchClear').classList.toggle('visible',q.length>0);
+  let anyVisible=false;
+  currentSections.forEach(({sec,tab})=>{
+    const titleEl=sec.querySelector('.cat-section-title');
+    const catMatch=!q||(titleEl&&titleEl.textContent.toLowerCase().includes(q));
+    let sectionHasMatch=catMatch;
+    sec.querySelectorAll('.item-card').forEach(card=>{
+      const show=catMatch||(card.dataset.search||'').includes(q);
+      card.style.display=show?'':'none';
+      if(show)sectionHasMatch=true;
+    });
+    sec.style.display=sectionHasMatch?'':'none';
+    tab.style.display=sectionHasMatch?'':'none';
+    if(sectionHasMatch)anyVisible=true;
+  });
+  const nr=document.getElementById('noResults');
+  if(nr)nr.classList.toggle('show',q.length>0&&!anyVisible);
+}
+
+function setupSearch(){
+  const input=document.getElementById('menuSearch');
+  const clearBtn=document.getElementById('searchClear');
+  input.addEventListener('input',()=>applySearch(input.value));
+  clearBtn.addEventListener('click',()=>{input.value='';applySearch('');input.focus();});
+}
+setupSearch();
 
 main();
 </script>
