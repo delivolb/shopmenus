@@ -97,7 +97,9 @@ html,body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--dark
 /* ── Hero Header ── */
 #siteHeader{
   background:linear-gradient(160deg, var(--hero-from), var(--hero-to));
-  padding:clamp(14px,4vw,24px) 20px clamp(10px,3vw,18px);
+  padding:clamp(20px,5.5vw,32px) 20px clamp(16px,4vw,26px);
+  min-height:clamp(225px,46vw,260px);
+  display:flex;flex-direction:column;justify-content:center;align-items:center;
   text-align:center;position:relative;overflow:hidden;flex-shrink:0;
 }
 /* animated glow orb */
@@ -115,6 +117,28 @@ html,body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--dark
   opacity:.06;pointer-events:none;
 }
 @keyframes glowPulse{0%,100%{opacity:.7;transform:scale(1);}50%{opacity:1;transform:scale(1.08);}}
+
+/* Social icons pinned in hero corner */
+#heroSocials{
+  position:absolute;top:14px;inset-inline-end:14px;z-index:3;
+  display:flex;flex-direction:column;gap:8px;
+}
+.hero-social-btn{
+  width:32px;height:32px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;text-decoration:none;flex-shrink:0;
+  border:1px solid rgba(255,255,255,.25);
+  box-shadow:0 2px 8px rgba(0,0,0,.3);
+  transition:transform .2s ease,box-shadow .2s ease;
+}
+.hero-social-btn svg{width:16px;height:16px;}
+@media(hover:hover){.hero-social-btn:hover{transform:scale(1.1);box-shadow:0 3px 10px rgba(0,0,0,.4);}}
+.hero-social-btn:active{transform:scale(.92);}
+#waFab{background:#25D366;}
+#fbFab{background:#1877F2;}
+#igFab{background:radial-gradient(circle at 30% 110%,#fdf497 0%,#fdf497 5%,#fd5949 45%,#d6249f 60%,#285AEB 90%);}
+#ttFab{background:#000;}
+#locFab{background:#EA4335;}
 
 /* Shop type badge */
 #shopTypeBadge{
@@ -226,7 +250,7 @@ html,body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--dark
 
 /* ── Page Body ── */
 #pageBody{padding-top:var(--topbar-h);}
-#content{padding:clamp(14px,3vw,24px) clamp(12px,3vw,18px) 80px;max-width:740px;margin:0 auto;width:100%;}
+#content{padding:clamp(14px,3vw,24px) clamp(12px,3vw,18px) 32px;max-width:740px;margin:0 auto;width:100%;}
 
 /* ── Category Section ── */
 .cat-section{margin-bottom:clamp(28px,6vw,42px);}
@@ -295,21 +319,6 @@ footer{
 }
 footer span{color:var(--accent);font-weight:600;}
 
-/* ── WhatsApp Floating Button ── */
-#waFab{
-  position:fixed;bottom:20px;inset-inline-end:20px;z-index:200;
-  width:56px;height:56px;border-radius:50%;
-  background:#25D366;color:#fff;
-  display:flex;align-items:center;justify-content:center;
-  box-shadow:0 4px 16px rgba(0,0,0,.3);
-  text-decoration:none;
-  animation:fadeUp .3s ease both;
-  transition:transform .2s,box-shadow .2s;
-}
-#waFab svg{width:30px;height:30px;}
-@media(hover:hover){#waFab:hover{transform:scale(1.08);box-shadow:0 6px 20px rgba(0,0,0,.35);}}
-#waFab:active{transform:scale(.96);}
-
 </style>
 </head>
 <body>
@@ -320,6 +329,23 @@ footer span{color:var(--accent);font-weight:600;}
 <div id="app" style="display:none">
   <div id="topBar">
     <div id="siteHeader">
+      <div id="heroSocials">
+        <a id="waFab" class="hero-social-btn" href="#" target="_blank" rel="noopener" style="display:none" aria-label="واتساب">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12.004 2C6.486 2 2.01 6.477 2.01 11.994c0 2.114.552 4.096 1.514 5.816L2 22l4.312-1.494a9.947 9.947 0 0 0 5.692 1.78h.004c5.518 0 9.993-4.478 9.993-9.994C21.998 6.477 17.522 2 12.004 2zm0 18.163a8.15 8.15 0 0 1-4.152-1.133l-.298-.177-3.083 1.068 1.084-3.006-.194-.309a8.14 8.14 0 0 1-1.256-4.362c0-4.5 3.66-8.163 8.16-8.163 2.179 0 4.226.85 5.766 2.393a8.106 8.106 0 0 1 2.393 5.775c0 4.5-3.66 8.914-8.42 8.914z"/></svg>
+        </a>
+        <a id="fbFab" class="hero-social-btn" href="#" target="_blank" rel="noopener" style="display:none" aria-label="فيسبوك">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22 12.06C22 6.5 17.52 2 12 2S2 6.5 2 12.06C2 17.08 5.66 21.24 10.44 22v-7.03H7.9v-2.91h2.54V9.85c0-2.5 1.49-3.89 3.77-3.89 1.09 0 2.23.2 2.23.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56v1.88h2.78l-.44 2.91h-2.34V22C18.34 21.24 22 17.08 22 12.06z"/></svg>
+        </a>
+        <a id="igFab" class="hero-social-btn" href="#" target="_blank" rel="noopener" style="display:none" aria-label="انستغرام">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c2.72 0 3.06.01 4.12.06 1.06.05 1.79.22 2.43.47.66.26 1.22.6 1.77 1.15.55.55.89 1.11 1.15 1.77.25.64.42 1.37.47 2.43.05 1.06.06 1.4.06 4.12s-.01 3.06-.06 4.12c-.05 1.06-.22 1.79-.47 2.43a4.9 4.9 0 0 1-1.15 1.77 4.9 4.9 0 0 1-1.77 1.15c-.64.25-1.37.42-2.43.47-1.06.05-1.4.06-4.12.06s-3.06-.01-4.12-.06c-1.06-.05-1.79-.22-2.43-.47a4.9 4.9 0 0 1-1.77-1.15 4.9 4.9 0 0 1-1.15-1.77c-.25-.64-.42-1.37-.47-2.43C2.01 15.06 2 14.72 2 12s.01-3.06.06-4.12c.05-1.06.22-1.79.47-2.43.26-.66.6-1.22 1.15-1.77A4.9 4.9 0 0 1 5.45.53C6.09.28 6.82.11 7.88.06 8.94.01 9.28 0 12 0zm0 5.84a6.16 6.16 0 1 0 0 12.32 6.16 6.16 0 0 0 0-12.32zm0 10.16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.4-10.4a1.44 1.44 0 1 1-2.88 0 1.44 1.44 0 0 1 2.88 0z"/></svg>
+        </a>
+        <a id="ttFab" class="hero-social-btn" href="#" target="_blank" rel="noopener" style="display:none" aria-label="تيك توك">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.6 5.82c-.98-.9-1.6-2.16-1.6-3.57h-3.16v14.02c0 1.55-1.26 2.8-2.8 2.8a2.8 2.8 0 0 1-2.8-2.8 2.8 2.8 0 0 1 2.8-2.8c.29 0 .57.05.83.13V10.4a6.2 6.2 0 0 0-.83-.06 6.06 6.06 0 0 0-6.06 6.06 6.06 6.06 0 0 0 6.06 6.06 6.06 6.06 0 0 0 6.06-6.06V9.1a8.6 8.6 0 0 0 5.04 1.62V7.55a5.2 5.2 0 0 1-3.54-1.73z"/></svg>
+        </a>
+        <a id="locFab" class="hero-social-btn" href="#" target="_blank" rel="noopener" style="display:none" aria-label="الموقع">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C7.86 2 4.5 5.36 4.5 9.5c0 5.5 7.5 12.5 7.5 12.5s7.5-7 7.5-12.5C19.5 5.36 16.14 2 12 2zm0 10.25a2.75 2.75 0 1 1 0-5.5 2.75 2.75 0 0 1 0 5.5z"/></svg>
+        </a>
+      </div>
       <div id="shopTypeBadge" style="display:none"></div>
       <div id="shopName">...</div>
       <div id="shopDesc"></div>
@@ -341,9 +367,7 @@ footer span{color:var(--accent);font-weight:600;}
   </div>
 </div>
 
-<a id="waFab" href="#" target="_blank" rel="noopener" style="display:none" aria-label="واتساب">
-  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12.004 2C6.486 2 2.01 6.477 2.01 11.994c0 2.114.552 4.096 1.514 5.816L2 22l4.312-1.494a9.947 9.947 0 0 0 5.692 1.78h.004c5.518 0 9.993-4.478 9.993-9.994C21.998 6.477 17.522 2 12.004 2zm0 18.163a8.15 8.15 0 0 1-4.152-1.133l-.298-.177-3.083 1.068 1.084-3.006-.194-.309a8.14 8.14 0 0 1-1.256-4.362c0-4.5 3.66-8.163 8.16-8.163 2.179 0 4.226.85 5.766 2.393a8.106 8.106 0 0 1 2.393 5.775c0 4.5-3.66 8.914-8.42 8.914z"/></svg>
-</a>
+
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-app.js";
@@ -417,6 +441,17 @@ function applyTheme(type) {
   badge.style.display = 'inline-block';
 }
 
+// ── Optional hero background image ────────────────────────────────────────────
+function applyHeroImage(url) {
+  const header = document.getElementById('siteHeader');
+  if (!url) return;
+  header.style.backgroundImage =
+    'linear-gradient(160deg, rgba(0,0,0,.55), rgba(0,0,0,.65)), url("' + url.replace(/"/g,'') + '")';
+  header.style.backgroundSize = 'cover';
+  header.style.backgroundPosition = 'center';
+  header.style.backgroundRepeat = 'no-repeat';
+}
+
 // ── TopBar height ─────────────────────────────────────────────────────────────
 function updateTopBarHeight() {
   const h = document.getElementById('topBar').offsetHeight;
@@ -481,12 +516,37 @@ function normalizePhone(raw){
   return'961'+d;
 }
 function setupWhatsappFab(rawNumber,shopName){
-  const fab=document.getElementById('waFab');
   const num=normalizePhone(rawNumber);
-  if(!num){fab.style.display='none';return;}
-  const msg=encodeURIComponent('مرحباً، أرغب بالاستفسار عن '+shopName);
-  fab.href='https://wa.me/'+num+'?text='+msg;
-  fab.style.display='flex';
+  return num ? 'https://wa.me/'+num+'?text='+encodeURIComponent('مرحباً، أرغب بالاستفسار عن '+shopName) : '';
+}
+
+// ── Facebook / Instagram / TikTok / WhatsApp / Location icons ───────────────
+function normalizeSocialLink(raw,baseUrl){
+  let v=(raw||'').trim();
+  if(!v)return'';
+  if(/^https?:\/\//i.test(v))return v;
+  v=v.replace(/^@/,'');
+  return baseUrl+v;
+}
+function normalizeLocationLink(raw){
+  let v=(raw||'').trim();
+  if(!v)return'';
+  if(/^https?:\/\//i.test(v))return v;
+  return 'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(v);
+}
+function initSocialFabs(sh,shopName){
+  const items=[
+    {id:'waFab', url:setupWhatsappFab(sh.whatsapp,shopName)},
+    {id:'fbFab', url:normalizeSocialLink(sh.facebook,'https://facebook.com/')},
+    {id:'igFab', url:normalizeSocialLink(sh.instagram,'https://instagram.com/')},
+    {id:'ttFab', url:normalizeSocialLink(sh.tiktok,'https://tiktok.com/@')},
+    {id:'locFab', url:normalizeLocationLink(sh.location)}
+  ];
+  items.forEach(i=>{
+    const el=document.getElementById(i.id);
+    if(i.url){ el.href=i.url; el.style.display='flex'; }
+    else{ el.style.display='none'; }
+  });
 }
 
 // ── Search state ──────────────────────────────────────────────────────────────
@@ -511,12 +571,13 @@ async function main(){
 
     // Apply shop type theme
     if(sh.type) applyTheme(sh.type);
+    if(sh.heroImage) applyHeroImage(sh.heroImage);
 
     document.getElementById('shopName').textContent=sh.name||shopId;
     document.getElementById('shopDesc').textContent=sh.description||'';
     document.title=(sh.name||shopId)+' — القائمة';
 
-    setupWhatsappFab(sh.whatsapp,sh.name||shopId);
+    initSocialFabs(sh, sh.name||shopId);
 
     if(sh.lastSync){
       const el=document.getElementById('lastSync');
