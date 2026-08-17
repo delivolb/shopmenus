@@ -86,6 +86,24 @@
   .modal-actions .btn{flex:1;}
   .btn-secondary{background:transparent;border:1px solid var(--border);color:var(--muted);}
   .btn-secondary:hover{border-color:var(--text);color:var(--text);}
+
+  .img-repeater{display:flex;flex-direction:column;gap:8px;margin-bottom:8px;}
+  .img-repeater-row{display:flex;gap:8px;align-items:center;}
+  .img-repeater-row input{flex:1;}
+  .img-repeater-row .img-remove-btn{
+    flex-shrink:0;width:34px;height:34px;border-radius:8px;
+    background:transparent;border:1px solid var(--border);color:var(--danger);
+    cursor:pointer;font-size:16px;line-height:1;
+    display:flex;align-items:center;justify-content:center;transition:all .2s;
+  }
+  .img-repeater-row .img-remove-btn:hover{background:var(--danger);color:#fff;border-color:var(--danger);}
+  .img-repeater-add{
+    align-self:flex-start;background:transparent;border:1px dashed var(--border);
+    color:var(--accent);border-radius:8px;padding:8px 14px;font-size:13px;font-weight:600;
+    cursor:pointer;transition:all .2s;font-family:'Inter','Cairo',sans-serif;
+  }
+  .img-repeater-add:hover{border-color:var(--accent);background:rgba(200,169,110,.08);}
+  .img-repeater-hint{display:block;font-size:11px;color:var(--muted);margin-top:6px;line-height:1.5;}
 </style>
 </head>
 <body>
@@ -149,6 +167,10 @@
           <input id="newShopWhatsapp" placeholder="+961 3 101 797" />
         </div>
         <div class="form-group">
+          <label>Secondary WhatsApp Number (optional)</label>
+          <input id="newShopWhatsapp2" placeholder="+961 3 101 797" />
+        </div>
+        <div class="form-group">
           <label>Facebook (optional)</label>
           <input id="newShopFacebook" placeholder="username or full URL" />
         </div>
@@ -165,8 +187,10 @@
           <input id="newShopLocation" placeholder="Google Maps link or address" />
         </div>
         <div class="form-group" style="grid-column:1 / -1">
-          <label>Hero Background Image URL (optional)</label>
-          <input id="newShopHeroImage" placeholder="https://.../image.jpg" />
+          <label>Hero Background Images (optional)</label>
+          <div class="img-repeater" id="newShopHeroImages"></div>
+          <button type="button" class="img-repeater-add" onclick="addHeroImageRow('newShopHeroImages')">+ Add Image</button>
+          <span class="img-repeater-hint">Paste a direct image URL (jpg, png, webp, etc — from Imgur, Firebase Storage, etc). Add one image for a static background, or several — they'll crossfade automatically on the menu page.</span>
         </div>
         <div class="form-group">
           <label>Display Currency</label>
@@ -246,6 +270,10 @@
       <input id="editWhatsapp" placeholder="+961 3 101 797" />
     </div>
     <div class="modal-field">
+      <label>Secondary WhatsApp Number (optional)</label>
+      <input id="editWhatsapp2" placeholder="+961 3 101 797" />
+    </div>
+    <div class="modal-field">
       <label>Facebook (optional)</label>
       <input id="editFacebook" placeholder="username or full URL" />
     </div>
@@ -262,8 +290,10 @@
       <input id="editLocation" placeholder="Google Maps link or address" />
     </div>
     <div class="modal-field">
-      <label>Hero Background Image URL (optional)</label>
-      <input id="editHeroImage" placeholder="https://.../image.jpg" />
+      <label>Hero Background Images (optional)</label>
+      <div class="img-repeater" id="editHeroImages"></div>
+      <button type="button" class="img-repeater-add" onclick="addHeroImageRow('editHeroImages')">+ Add Image</button>
+      <span class="img-repeater-hint">Accepts jpg, png, webp, etc. Several images will crossfade automatically on the menu page.</span>
     </div>
     <div class="modal-field">
       <label>Display Currency</label>
@@ -396,6 +426,30 @@ function doLogout() {
   loginErr('');
 }
 
+// ── Hero Image Repeater ──────────────────────────────────────────────────────
+function heroImageRowHTML(value) {
+  const v = (value || '').replace(/"/g, '&quot;');
+  return '<div class="img-repeater-row">'
+    + '<input type="text" class="hero-img-input" placeholder="https://.../image.jpg or .webp" value="' + v + '" />'
+    + '<button type="button" class="img-remove-btn" title="Remove" onclick="this.parentElement.remove()">×</button>'
+    + '</div>';
+}
+function addHeroImageRow(containerId, value) {
+  document.getElementById(containerId).insertAdjacentHTML('beforeend', heroImageRowHTML(value || ''));
+}
+window.addHeroImageRow = addHeroImageRow; // expose to inline onclick (module scripts aren't global by default)
+function renderHeroImageRows(containerId, urls) {
+  const c = document.getElementById(containerId);
+  c.innerHTML = '';
+  const list = (urls && urls.length) ? urls : [''];
+  list.forEach(u => addHeroImageRow(containerId, u));
+}
+function collectHeroImageRows(containerId) {
+  return Array.from(document.querySelectorAll('#' + containerId + ' .hero-img-input'))
+    .map(i => i.value.trim()).filter(Boolean);
+}
+renderHeroImageRows('newShopHeroImages', []);
+
 // ── Shops ─────────────────────────────────────────────────────────────────────
 async function loadShops() {
   document.getElementById('shopsLoading').style.display = 'block';
@@ -454,11 +508,12 @@ async function addShop() {
   const desc     = document.getElementById('newShopDesc').value.trim();
   const token    = document.getElementById('newShopToken').value.trim();
   const whatsapp  = document.getElementById('newShopWhatsapp').value.trim();
+  const whatsapp2 = document.getElementById('newShopWhatsapp2').value.trim();
   const facebook  = document.getElementById('newShopFacebook').value.trim();
   const instagram = document.getElementById('newShopInstagram').value.trim();
   const tiktok    = document.getElementById('newShopTiktok').value.trim();
   const location  = document.getElementById('newShopLocation').value.trim();
-  const heroImage = document.getElementById('newShopHeroImage').value.trim();
+  const heroImages = collectHeroImageRows('newShopHeroImages');
   const currency = document.getElementById('newShopCurrency').value;
   const status   = document.getElementById('newShopStatus').value;
   const type     = document.getElementById('newShopType').value;
@@ -476,12 +531,14 @@ async function addShop() {
     // Use shopId as the document key AND store it as a field
     await setDoc(doc(db, "shops", shopId), {
       shopId, name: shopName, description: desc,
-      token, whatsapp, facebook, instagram, tiktok, location, heroImage, currency, status, type,
+      token, whatsapp, whatsapp2, facebook, instagram, tiktok, location,
+      heroImages, heroImage: heroImages[0] || '', currency, status, type,
       createdAt: new Date().toISOString()
     });
     toast('Shop saved: ' + shopName);
-    ['newShopId','newShopName','newShopDesc','newShopToken','newShopWhatsapp','newShopFacebook','newShopInstagram','newShopTiktok','newShopLocation','newShopHeroImage'].forEach(id =>
+    ['newShopId','newShopName','newShopDesc','newShopToken','newShopWhatsapp','newShopWhatsapp2','newShopFacebook','newShopInstagram','newShopTiktok','newShopLocation'].forEach(id =>
       document.getElementById(id).value = '');
+    renderHeroImageRows('newShopHeroImages', []);
     await loadShops();
   } catch(e) {
     dashErr('Save failed: ' + e.message);
@@ -499,11 +556,12 @@ function openEditModal(docId, s) {
   document.getElementById('editDesc').value     = s.description || '';
   document.getElementById('editToken').value    = s.token       || '';
   document.getElementById('editWhatsapp').value  = s.whatsapp   || '';
+  document.getElementById('editWhatsapp2').value = s.whatsapp2  || '';
   document.getElementById('editFacebook').value  = s.facebook   || '';
   document.getElementById('editInstagram').value = s.instagram  || '';
   document.getElementById('editTiktok').value    = s.tiktok     || '';
   document.getElementById('editLocation').value  = s.location   || '';
-  document.getElementById('editHeroImage').value = s.heroImage  || '';
+  renderHeroImageRows('editHeroImages', (s.heroImages && s.heroImages.length) ? s.heroImages : (s.heroImage ? [s.heroImage] : []));
   document.getElementById('editCurrency').value = s.currency    || 'both';
   document.getElementById('editStatus').value   = s.status      || 'active';
   document.getElementById('editType').value     = s.type        || '';
@@ -517,11 +575,12 @@ async function saveEdit() {
   const desc     = document.getElementById('editDesc').value.trim();
   const token    = document.getElementById('editToken').value.trim();
   const whatsapp  = document.getElementById('editWhatsapp').value.trim();
+  const whatsapp2 = document.getElementById('editWhatsapp2').value.trim();
   const facebook  = document.getElementById('editFacebook').value.trim();
   const instagram = document.getElementById('editInstagram').value.trim();
   const tiktok    = document.getElementById('editTiktok').value.trim();
   const location  = document.getElementById('editLocation').value.trim();
-  const heroImage = document.getElementById('editHeroImage').value.trim();
+  const heroImages = collectHeroImageRows('editHeroImages');
   const currency = document.getElementById('editCurrency').value;
   const status   = document.getElementById('editStatus').value;
   const type     = document.getElementById('editType').value;
@@ -530,7 +589,7 @@ async function saveEdit() {
   const btn = document.getElementById('editSaveBtn');
   btn.textContent = 'Saving...'; btn.disabled = true;
   try {
-    await updateDoc(doc(db, "shops", docId), { name, description: desc, token, whatsapp, facebook, instagram, tiktok, location, heroImage, currency, status, type });
+    await updateDoc(doc(db, "shops", docId), { name, description: desc, token, whatsapp, whatsapp2, facebook, instagram, tiktok, location, heroImages, heroImage: heroImages[0] || '', currency, status, type });
     document.getElementById('editModal').classList.remove('open');
     toast('Shop updated: ' + name);
     loadShops();

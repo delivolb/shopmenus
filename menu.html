@@ -102,6 +102,22 @@ html,body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--dark
   display:flex;flex-direction:column;justify-content:center;align-items:center;
   text-align:center;position:relative;overflow:hidden;flex-shrink:0;
 }
+/* rotating hero background photos (crossfade) */
+.hero-bg-layer{
+  position:absolute;inset:0;
+  background-size:cover;background-position:center;background-repeat:no-repeat;
+  opacity:0;transition:opacity 1.4s ease;pointer-events:none;
+}
+.hero-bg-layer.is-active{opacity:1;}
+#heroDarken{
+  position:absolute;inset:0;display:none;pointer-events:none;
+  background:linear-gradient(160deg, rgba(0,0,0,.55), rgba(0,0,0,.65));
+}
+#heroContent{
+  position:relative;z-index:2;width:100%;
+  display:flex;flex-direction:column;justify-content:center;align-items:center;
+  padding-inline-end:clamp(52px,14vw,72px);
+}
 /* animated glow orb */
 #siteHeader::before{
   content:'';position:absolute;
@@ -120,10 +136,12 @@ html,body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--dark
 
 /* Social icons pinned in hero corner */
 #heroSocials{
-  position:absolute;top:14px;inset-inline-end:14px;z-index:3;
-  display:flex;flex-direction:column;gap:8px;
+  position:absolute;top:0;inset-inline-end:0;z-index:3;
+  display:flex;flex-direction:column;gap:8px;align-items:flex-end;
+  padding:6px;
 }
 .hero-social-btn{
+  position:relative;
   width:32px;height:32px;border-radius:50%;
   display:flex;align-items:center;justify-content:center;
   color:#fff;text-decoration:none;flex-shrink:0;
@@ -134,7 +152,15 @@ html,body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--dark
 .hero-social-btn svg{width:16px;height:16px;}
 @media(hover:hover){.hero-social-btn:hover{transform:scale(1.1);box-shadow:0 3px 10px rgba(0,0,0,.4);}}
 .hero-social-btn:active{transform:scale(.92);}
-#waFab{background:#25D366;}
+#waRow{display:flex;flex-direction:row-reverse;gap:8px;}
+#waFab,#waFab2{background:#25D366;}
+.wa-badge{
+  display:none;position:absolute;bottom:-3px;inset-inline-end:-3px;
+  width:14px;height:14px;border-radius:50%;
+  background:#fff;color:#25D366;border:1px solid #25D366;
+  font-size:9px;font-weight:900;line-height:1;
+  align-items:center;justify-content:center;
+}
 #fbFab{background:#1877F2;}
 #igFab{background:radial-gradient(circle at 30% 110%,#fdf497 0%,#fdf497 5%,#fd5949 45%,#d6249f 60%,#285AEB 90%);}
 #ttFab{background:#000;}
@@ -329,10 +355,20 @@ footer span{color:var(--accent);font-weight:600;}
 <div id="app" style="display:none">
   <div id="topBar">
     <div id="siteHeader">
+      <div id="heroBgA" class="hero-bg-layer"></div>
+      <div id="heroBgB" class="hero-bg-layer"></div>
+      <div id="heroDarken"></div>
       <div id="heroSocials">
+        <div id="waRow">
         <a id="waFab" class="hero-social-btn" href="#" target="_blank" rel="noopener" style="display:none" aria-label="واتساب">
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12.004 2C6.486 2 2.01 6.477 2.01 11.994c0 2.114.552 4.096 1.514 5.816L2 22l4.312-1.494a9.947 9.947 0 0 0 5.692 1.78h.004c5.518 0 9.993-4.478 9.993-9.994C21.998 6.477 17.522 2 12.004 2zm0 18.163a8.15 8.15 0 0 1-4.152-1.133l-.298-.177-3.083 1.068 1.084-3.006-.194-.309a8.14 8.14 0 0 1-1.256-4.362c0-4.5 3.66-8.163 8.16-8.163 2.179 0 4.226.85 5.766 2.393a8.106 8.106 0 0 1 2.393 5.775c0 4.5-3.66 8.914-8.42 8.914z"/></svg>
+          <span class="wa-badge">1</span>
         </a>
+        <a id="waFab2" class="hero-social-btn" href="#" target="_blank" rel="noopener" style="display:none" aria-label="واتساب 2">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12.004 2C6.486 2 2.01 6.477 2.01 11.994c0 2.114.552 4.096 1.514 5.816L2 22l4.312-1.494a9.947 9.947 0 0 0 5.692 1.78h.004c5.518 0 9.993-4.478 9.993-9.994C21.998 6.477 17.522 2 12.004 2zm0 18.163a8.15 8.15 0 0 1-4.152-1.133l-.298-.177-3.083 1.068 1.084-3.006-.194-.309a8.14 8.14 0 0 1-1.256-4.362c0-4.5 3.66-8.163 8.16-8.163 2.179 0 4.226.85 5.766 2.393a8.106 8.106 0 0 1 2.393 5.775c0 4.5-3.66 8.914-8.42 8.914z"/></svg>
+          <span class="wa-badge">2</span>
+        </a>
+        </div>
         <a id="fbFab" class="hero-social-btn" href="#" target="_blank" rel="noopener" style="display:none" aria-label="فيسبوك">
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22 12.06C22 6.5 17.52 2 12 2S2 6.5 2 12.06C2 17.08 5.66 21.24 10.44 22v-7.03H7.9v-2.91h2.54V9.85c0-2.5 1.49-3.89 3.77-3.89 1.09 0 2.23.2 2.23.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56v1.88h2.78l-.44 2.91h-2.34V22C18.34 21.24 22 17.08 22 12.06z"/></svg>
         </a>
@@ -346,10 +382,12 @@ footer span{color:var(--accent);font-weight:600;}
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C7.86 2 4.5 5.36 4.5 9.5c0 5.5 7.5 12.5 7.5 12.5s7.5-7 7.5-12.5C19.5 5.36 16.14 2 12 2zm0 10.25a2.75 2.75 0 1 1 0-5.5 2.75 2.75 0 0 1 0 5.5z"/></svg>
         </a>
       </div>
+      <div id="heroContent">
       <div id="shopTypeBadge" style="display:none"></div>
       <div id="shopName">...</div>
       <div id="shopDesc"></div>
       <div class="hero-line"></div>
+      </div>
     </div>
     <div id="searchBarWrap">
       <div id="searchBox">
@@ -441,15 +479,40 @@ function applyTheme(type) {
   badge.style.display = 'inline-block';
 }
 
-// ── Optional hero background image ────────────────────────────────────────────
-function applyHeroImage(url) {
-  const header = document.getElementById('siteHeader');
-  if (!url) return;
-  header.style.backgroundImage =
-    'linear-gradient(160deg, rgba(0,0,0,.55), rgba(0,0,0,.65)), url("' + url.replace(/"/g,'') + '")';
-  header.style.backgroundSize = 'cover';
-  header.style.backgroundPosition = 'center';
-  header.style.backgroundRepeat = 'no-repeat';
+// ── Optional hero background image(s) — crossfades when more than one ────────
+let heroImgTimer = null;
+function applyHeroImages(urls) {
+  const layerA = document.getElementById('heroBgA');
+  const layerB = document.getElementById('heroBgB');
+  const darken = document.getElementById('heroDarken');
+  if (heroImgTimer) { clearInterval(heroImgTimer); heroImgTimer = null; }
+
+  const list = (urls || []).map(u => (u || '').trim()).filter(Boolean);
+  if (!list.length) {
+    layerA.style.opacity = 0; layerA.classList.remove('is-active');
+    layerB.style.opacity = 0; layerB.classList.remove('is-active');
+    darken.style.display = 'none';
+    return;
+  }
+
+  darken.style.display = 'block';
+  const layers = [layerA, layerB];
+  let activeIdx = 0, imgIdx = 0;
+
+  layers[activeIdx].style.backgroundImage = 'url("' + list[imgIdx].replace(/"/g,'') + '")';
+  layers[activeIdx].classList.add('is-active');
+  layers[1 - activeIdx].classList.remove('is-active');
+
+  if (list.length < 2) return;
+
+  heroImgTimer = setInterval(() => {
+    imgIdx = (imgIdx + 1) % list.length;
+    const nextIdx = 1 - activeIdx;
+    layers[nextIdx].style.backgroundImage = 'url("' + list[imgIdx].replace(/"/g,'') + '")';
+    layers[nextIdx].classList.add('is-active');
+    layers[activeIdx].classList.remove('is-active');
+    activeIdx = nextIdx;
+  }, 5000);
 }
 
 // ── TopBar height ─────────────────────────────────────────────────────────────
@@ -519,6 +582,20 @@ function setupWhatsappFab(rawNumber,shopName){
   const num=normalizePhone(rawNumber);
   return num ? 'https://wa.me/'+num+'?text='+encodeURIComponent('مرحباً، أرغب بالاستفسار عن '+shopName) : '';
 }
+function setupWaButtons(url1,url2){
+  const wa1=document.getElementById('waFab'), wa2=document.getElementById('waFab2');
+  const b1=wa1.querySelector('.wa-badge'), b2=wa2.querySelector('.wa-badge');
+  if(url1 && url2){
+    wa1.href=url1; wa1.style.display='flex'; b1.style.display='flex';
+    wa2.href=url2; wa2.style.display='flex'; b2.style.display='flex';
+  } else {
+    const single=url1||url2;
+    if(single){ wa1.href=single; wa1.style.display='flex'; }
+    else{ wa1.style.display='none'; }
+    b1.style.display='none';
+    wa2.style.display='none';
+  }
+}
 
 // ── Facebook / Instagram / TikTok / WhatsApp / Location icons ───────────────
 function normalizeSocialLink(raw,baseUrl){
@@ -535,8 +612,8 @@ function normalizeLocationLink(raw){
   return 'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(v);
 }
 function initSocialFabs(sh,shopName){
+  setupWaButtons(setupWhatsappFab(sh.whatsapp,shopName), setupWhatsappFab(sh.whatsapp2,shopName));
   const items=[
-    {id:'waFab', url:setupWhatsappFab(sh.whatsapp,shopName)},
     {id:'fbFab', url:normalizeSocialLink(sh.facebook,'https://facebook.com/')},
     {id:'igFab', url:normalizeSocialLink(sh.instagram,'https://instagram.com/')},
     {id:'ttFab', url:normalizeSocialLink(sh.tiktok,'https://tiktok.com/@')},
@@ -571,7 +648,7 @@ async function main(){
 
     // Apply shop type theme
     if(sh.type) applyTheme(sh.type);
-    if(sh.heroImage) applyHeroImage(sh.heroImage);
+    applyHeroImages((sh.heroImages && sh.heroImages.length) ? sh.heroImages : (sh.heroImage ? [sh.heroImage] : []));
 
     document.getElementById('shopName').textContent=sh.name||shopId;
     document.getElementById('shopDesc').textContent=sh.description||'';
