@@ -220,6 +220,21 @@
                 <option value="computer">Computer Shop</option>
           </select>
         </div>
+        <div class="form-group" style="grid-column:1 / -1">
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;text-transform:none;font-size:13px;">
+            <input type="checkbox" id="newShopBranch2Enabled" style="width:16px;height:16px;accent-color:var(--accent);cursor:pointer;" />
+            Enable Secondary Branch (Branch 2)
+          </label>
+          <span class="img-repeater-hint">When enabled, the Java operator can choose to upload inventory to Branch 1, Branch 2, or both — and the QR menu will let the customer pick which branch's menu to view.</span>
+        </div>
+        <div class="form-group" id="newShopBranch1LabelWrap" style="display:none">
+          <label>Branch 1 Label</label>
+          <input id="newShopBranch1Label" placeholder="Branch 1" />
+        </div>
+        <div class="form-group" id="newShopBranch2LabelWrap" style="display:none">
+          <label>Branch 2 Label</label>
+          <input id="newShopBranch2Label" placeholder="Branch 2" />
+        </div>
       </div>
       <button class="btn btn-primary" id="saveShopBtn">💾 Save Shop</button>
     </div>
@@ -322,6 +337,21 @@
         <option value="hotel">Hotel</option>
         <option value="computer">Computer Shop</option>
       </select>
+    </div>
+    <div class="modal-field">
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+        <input type="checkbox" id="editBranch2Enabled" style="width:16px;height:16px;accent-color:var(--accent);cursor:pointer;" />
+        Enable Secondary Branch (Branch 2)
+      </label>
+      <span class="img-repeater-hint">Lets the Java operator upload inventory to Branch 1, Branch 2, or both, and shows a branch picker on the QR menu.</span>
+    </div>
+    <div class="modal-field" id="editBranch1LabelWrap" style="display:none">
+      <label>Branch 1 Label</label>
+      <input id="editBranch1Label" placeholder="Branch 1" />
+    </div>
+    <div class="modal-field" id="editBranch2LabelWrap" style="display:none">
+      <label>Branch 2 Label</label>
+      <input id="editBranch2Label" placeholder="Branch 2" />
     </div>
     <div class="modal-actions">
       <button class="btn btn-secondary" id="editCancelBtn">Cancel</button>
@@ -517,6 +547,9 @@ async function addShop() {
   const currency = document.getElementById('newShopCurrency').value;
   const status   = document.getElementById('newShopStatus').value;
   const type     = document.getElementById('newShopType').value;
+  const branch2Enabled = document.getElementById('newShopBranch2Enabled').checked;
+  const branch1Label   = document.getElementById('newShopBranch1Label').value.trim();
+  const branch2Label   = document.getElementById('newShopBranch2Label').value.trim();
 
   // Strong validation — prevent undefined/empty saves
   if (!shopId)   return toast('Shop ID is required', true);
@@ -533,11 +566,15 @@ async function addShop() {
       shopId, name: shopName, description: desc,
       token, whatsapp, whatsapp2, facebook, instagram, tiktok, location,
       heroImages, heroImage: heroImages[0] || '', currency, status, type,
+      branch2Enabled, branch1Label, branch2Label,
       createdAt: new Date().toISOString()
     });
     toast('Shop saved: ' + shopName);
-    ['newShopId','newShopName','newShopDesc','newShopToken','newShopWhatsapp','newShopWhatsapp2','newShopFacebook','newShopInstagram','newShopTiktok','newShopLocation'].forEach(id =>
+    ['newShopId','newShopName','newShopDesc','newShopToken','newShopWhatsapp','newShopWhatsapp2','newShopFacebook','newShopInstagram','newShopTiktok','newShopLocation','newShopBranch1Label','newShopBranch2Label'].forEach(id =>
       document.getElementById(id).value = '');
+    document.getElementById('newShopBranch2Enabled').checked = false;
+    document.getElementById('newShopBranch1LabelWrap').style.display = 'none';
+    document.getElementById('newShopBranch2LabelWrap').style.display = 'none';
     renderHeroImageRows('newShopHeroImages', []);
     await loadShops();
   } catch(e) {
@@ -565,6 +602,11 @@ function openEditModal(docId, s) {
   document.getElementById('editCurrency').value = s.currency    || 'both';
   document.getElementById('editStatus').value   = s.status      || 'active';
   document.getElementById('editType').value     = s.type        || '';
+  document.getElementById('editBranch2Enabled').checked = !!s.branch2Enabled;
+  document.getElementById('editBranch1Label').value = s.branch1Label || '';
+  document.getElementById('editBranch2Label').value = s.branch2Label || '';
+  document.getElementById('editBranch1LabelWrap').style.display = s.branch2Enabled ? '' : 'none';
+  document.getElementById('editBranch2LabelWrap').style.display = s.branch2Enabled ? '' : 'none';
   document.getElementById('editModal').classList.add('open');
   document.getElementById('editName').focus();
 }
@@ -584,12 +626,15 @@ async function saveEdit() {
   const currency = document.getElementById('editCurrency').value;
   const status   = document.getElementById('editStatus').value;
   const type     = document.getElementById('editType').value;
+  const branch2Enabled = document.getElementById('editBranch2Enabled').checked;
+  const branch1Label   = document.getElementById('editBranch1Label').value.trim();
+  const branch2Label   = document.getElementById('editBranch2Label').value.trim();
   if (!name)  return toast('Shop Name is required', true);
   if (!token) return toast('Upload Token is required', true);
   const btn = document.getElementById('editSaveBtn');
   btn.textContent = 'Saving...'; btn.disabled = true;
   try {
-    await updateDoc(doc(db, "shops", docId), { name, description: desc, token, whatsapp, whatsapp2, facebook, instagram, tiktok, location, heroImages, heroImage: heroImages[0] || '', currency, status, type });
+    await updateDoc(doc(db, "shops", docId), { name, description: desc, token, whatsapp, whatsapp2, facebook, instagram, tiktok, location, heroImages, heroImage: heroImages[0] || '', currency, status, type, branch2Enabled, branch1Label, branch2Label });
     document.getElementById('editModal').classList.remove('open');
     toast('Shop updated: ' + name);
     loadShops();
@@ -651,6 +696,14 @@ async function tryAutoLogin() {
 }
 tryAutoLogin();
 
+document.getElementById('newShopBranch2Enabled').addEventListener('change', e => {
+  document.getElementById('newShopBranch1LabelWrap').style.display = e.target.checked ? '' : 'none';
+  document.getElementById('newShopBranch2LabelWrap').style.display = e.target.checked ? '' : 'none';
+});
+document.getElementById('editBranch2Enabled').addEventListener('change', e => {
+  document.getElementById('editBranch1LabelWrap').style.display = e.target.checked ? '' : 'none';
+  document.getElementById('editBranch2LabelWrap').style.display = e.target.checked ? '' : 'none';
+});
 document.getElementById('editSaveBtn').addEventListener('click', saveEdit);
 document.getElementById('editCancelBtn').addEventListener('click', closeEditModal);
 document.getElementById('editModal').addEventListener('click', e => { if(e.target===document.getElementById('editModal')) closeEditModal(); });

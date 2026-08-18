@@ -199,6 +199,27 @@ html,body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--dark
   background:linear-gradient(90deg,transparent,var(--accent2),transparent);
 }
 
+/* ── Branch Selector ── */
+#branchBar{
+  display:none;
+  background:var(--nav-bg);
+  border-bottom:1px solid var(--border);
+  padding:10px clamp(12px,3vw,18px);
+  flex-shrink:0;
+  gap:8px;
+  justify-content:center;
+}
+#branchBar.show{display:flex;}
+.branch-btn{
+  flex:1;max-width:220px;
+  padding:9px 14px;border-radius:999px;
+  border:1.5px solid var(--border);background:transparent;
+  color:var(--muted);font-family:'Tajawal',sans-serif;
+  font-size:clamp(12px,3vw,13px);font-weight:700;
+  cursor:pointer;transition:all .2s;
+}
+.branch-btn.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+
 /* ── Category Nav ── */
 #catNavWrap{
   background:var(--nav-bg);
@@ -389,6 +410,7 @@ footer span{color:var(--accent);font-weight:600;}
       <div class="hero-line"></div>
       </div>
     </div>
+    <div id="branchBar"></div>
     <div id="searchBarWrap">
       <div id="searchBox">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -409,7 +431,7 @@ footer span{color:var(--accent);font-weight:600;}
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-app.js";
-import { getFirestore, doc, getDoc, collection, getDocs, query, orderBy, onSnapshot }
+import { getFirestore, doc, getDoc, collection, getDocs, query, where, orderBy, onSnapshot }
   from "https://www.gstatic.com/firebasejs/11.9.0/firebase-firestore.js";
 
 const FIREBASE_CONFIG = {
@@ -629,7 +651,34 @@ function initSocialFabs(sh,shopName){
 // ── Search state ──────────────────────────────────────────────────────────────
 let currentSections=[];
 
+// ── Branch state ─────────────────────────────────────────────────────────────
+let branch2Enabled=false, currentBranch='b1', unsubscribeMenu=null;
+
+function setupBranchBar(sh){
+  const bar=document.getElementById('branchBar');
+  const b1Label=sh.branch1Label||'الفرع الأول';
+  const b2Label=sh.branch2Label||'الفرع الثاني';
+  bar.innerHTML='';
+  const b1=document.createElement('button');
+  b1.type='button';b1.className='branch-btn active';b1.textContent=b1Label;
+  b1.addEventListener('click',()=>switchBranch('b1',b1,b2));
+  const b2=document.createElement('button');
+  b2.type='button';b2.className='branch-btn';b2.textContent=b2Label;
+  b2.addEventListener('click',()=>switchBranch('b2',b2,b1));
+  bar.appendChild(b1);bar.appendChild(b2);
+  bar.classList.add('show');
+  updateTopBarHeight();
+}
+function switchBranch(branch,activeBtn,otherBtn){
+  if(branch===currentBranch)return;
+  currentBranch=branch;
+  activeBtn.classList.add('active');
+  otherBtn.classList.remove('active');
+  subscribeMenu();
+}
+
 // ── Main ──────────────────────────────────────────────────────────────────────
+let _db,_shopId,_currency='both';
 async function main(){
   const shopId=(new URLSearchParams(location.search).get('shop')||'').replace(/['"]/g,'').trim();
   if(!shopId){showError('لم يُحدَّد معرّف المتجر.');return;}
@@ -661,19 +710,45 @@ async function main(){
       el.textContent='آخر تحديث: '+fmtDate(sh.lastSync);
       el.classList.add('visible');
     }
+
+    branch2Enabled=!!sh.branch2Enabled;
+    if(branch2Enabled) setupBranchBar(sh);
+
     updateTopBarHeight();
   }catch(e){showError('خطأ: '+e.message);return;}
 
-  onSnapshot(
-    query(collection(db,'shops',shopId,'categories'),orderBy('order')),
+  _db=db;_shopId=shopId;_currency=currency;
+  subscribeMenu();
+}
+
+function subscribeMenu(){
+  if(unsubscribeMenu){unsubscribeMenu();unsubscribeMenu=null;}
+  const catCol=collection(_db,'shops',_shopId,'categories');
+  // Note: when filtering by branch we deliberately skip orderBy() in the query
+  // (a where()+orderBy() combo needs a Firestore composite index) and sort
+  // client-side instead — no index required.
+  const catQuery=branch2Enabled
+    ? query(catCol,where('branch','==',currentBranch))
+    : query(catCol,orderBy('order'));
+
+  unsubscribeMenu=onSnapshot(
+    catQuery,
     async snap=>{
       try{
-        const iSnap=await getDocs(query(collection(db,'shops',shopId,'items'),orderBy('order')));
+        const itemCol=collection(_db,'shops',_shopId,'items');
+        const itemQuery=branch2Enabled
+          ? query(itemCol,where('branch','==',currentBranch))
+          : query(itemCol,orderBy('order'));
+        const iSnap=await getDocs(itemQuery);
         const bycat={};
         iSnap.forEach(d=>{const it=d.data(),k=it.catId||'x';(bycat[k]=bycat[k]||[]).push(it);});
+        if(branch2Enabled){
+          Object.keys(bycat).forEach(k=>bycat[k].sort((a,b)=>(a.order||0)-(b.order||0)));
+        }
         const cats=[];snap.forEach(d=>cats.push(d.data()));
+        if(branch2Enabled) cats.sort((a,b)=>(a.order||0)-(b.order||0));
         const withItems=cats.filter(c=>bycat[c.id]&&bycat[c.id].length>0);
-        renderMenu(withItems,bycat,currency);
+        renderMenu(withItems,bycat,_currency);
         document.getElementById('app').style.display='';
         document.getElementById('splash').classList.add('hidden');
         updateTopBarHeight();
